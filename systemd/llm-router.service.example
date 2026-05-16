@@ -1,0 +1,17 @@
+[Unit]
+Description=Local LLM Router
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/DEIN_USER/LLM-Router
+Environment=LLM_ROUTER_CONFIG=/home/DEIN_USER/LLM-Router/configs/router.local.yaml
+EnvironmentFile=-/home/DEIN_USER/LLM-Router/.env
+ExecStart=/home/DEIN_USER/LLM-Router/.venv/bin/llm-router serve --config /home/DEIN_USER/LLM-Router/configs/router.local.yaml
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

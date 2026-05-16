@@ -1,0 +1,13 @@
+services:
+  llm-router:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "127.0.0.1:18080:18080"
+    environment:
+      LLM_ROUTER_CONFIG: /app/configs/router.local.yaml
+    volumes:
+      - ../configs/router.local.yaml:/app/configs/router.local.yaml:ro
+      - ../logs:/app/logs
+    restart: unless-stopped

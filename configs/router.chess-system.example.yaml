@@ -1,0 +1,110 @@
+server:
+  host: "127.0.0.1"
+  port: 18080
+
+runtime:
+  request_timeout_seconds: 900
+  connect_timeout_seconds: 10
+  reload_config_on_request: false
+  unknown_model_strategy: "error"
+
+backends:
+  local:
+    type: "openai_compatible"
+    base_url: "http://127.0.0.1:11434/v1"
+    api_key_env: "OLLAMA_LOCAL_API_KEY"
+    priority: 10
+    enabled: true
+
+  pi:
+    type: "openai_compatible"
+    base_url: "http://PI-IP:11434/v1"
+    api_key_env: "OLLAMA_PI_API_KEY"
+    priority: 20
+    enabled: true
+
+models:
+  kimi-cli-default:
+    provider_model: "kimi-k2.5:cloud"
+    backends: ["local", "pi"]
+    policy: "interactive"
+
+  chess-router:
+    provider_model: "gemma4:e4b"
+    backends: ["local", "pi"]
+    policy: "fast"
+
+  chess-small:
+    provider_model: "gemma4:e4b"
+    backends: ["local", "pi"]
+    policy: "fast"
+
+  chess-large:
+    provider_model: "gemma4:26b"
+    backends: ["local", "pi"]
+    policy: "long_running"
+
+  chess-task:
+    provider_model: "kimi-k2.5:cloud"
+    backends: ["local", "pi"]
+    policy: "standard"
+
+policies:
+  interactive:
+    max_attempts_per_backend: 1
+    retry_on_connection_error: true
+    retry_on_timeout: false
+    fallback_on_limit: true
+    fallback_on_5xx: true
+    fallback_on_4xx: false
+    fallback_on_model_not_found: false
+    timeout_seconds: 300
+
+  fast:
+    max_attempts_per_backend: 1
+    retry_on_connection_error: true
+    retry_on_timeout: false
+    fallback_on_limit: true
+    fallback_on_5xx: false
+    fallback_on_4xx: false
+    fallback_on_model_not_found: false
+    timeout_seconds: 120
+
+  standard:
+    max_attempts_per_backend: 1
+    retry_on_connection_error: true
+    retry_on_timeout: false
+    fallback_on_limit: true
+    fallback_on_5xx: true
+    fallback_on_4xx: false
+    fallback_on_model_not_found: false
+    timeout_seconds: 300
+
+  long_running:
+    max_attempts_per_backend: 1
+    retry_on_connection_error: true
+    retry_on_timeout: false
+    fallback_on_limit: true
+    fallback_on_5xx: true
+    fallback_on_4xx: false
+    fallback_on_model_not_found: true
+    timeout_seconds: 900
+
+limit_detection:
+  status_codes: [402, 403, 429]
+  body_markers:
+    - "rate limit"
+    - "quota"
+    - "limit"
+    - "volume"
+    - "insufficient quota"
+    - "too many requests"
+    - "usage limit"
+
+logging:
+  level: "INFO"
+  jsonl_path: "logs/llm-router.jsonl"
+  log_request_body: false
+  log_response_body: false
+  log_prompt_chars: false
+  log_headers: false

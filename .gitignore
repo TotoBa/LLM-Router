@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+
+# Local configuration
+.env
+router.local.yaml
+configs/router.local.yaml
+configs/*.local.yaml
+
+# Logs
+logs/
+*.log
+*.jsonl
+
+# Runtime
+.run/
+.cache/
+
+# IDE
+.vscode/
+.idea/
+uv.lock

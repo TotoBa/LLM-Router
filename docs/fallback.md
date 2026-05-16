@@ -49,6 +49,7 @@ policies:
     max_attempts_per_backend: 2
     max_backend_failures_before_cooldown: 2
     backend_cooldown_seconds: 300
+    return_last_error_on_exhausted_backends: true
 ```
 
 Damit wird ein Backend bei Verbindungsfehlern bis zu zweimal im selben Request versucht. Nach zwei fehlgeschlagenen Backend-Versuchen wird es fuer 300 Sekunden uebersprungen. Danach wird es automatisch wieder versucht.
@@ -56,6 +57,8 @@ Damit wird ein Backend bei Verbindungsfehlern bis zu zweimal im selben Request v
 HTTP-Fehler wie 429 oder 5xx werden nicht auf demselben Backend wiederholt, sondern zaehlen als fehlgeschlagener Backend-Versuch und fuehren bei passender Policy direkt zum Fallback.
 
 Fuer lange lokale LLM-Laeufe sollte `runtime.request_timeout_seconds: null` gesetzt bleiben. Dann bricht der Router eine laufende Antwort nicht wegen eines Read-Timeouts ab; nur der Verbindungsaufbau bleibt ueber `connect_timeout_seconds` begrenzt.
+
+Wenn alle fuer den Request sofort verfuegbaren Backends einen HTTP-Fehler zurueckgeben oder die Policy kein weiteres Backend erlaubt, gibt der Router standardmaessig den letzten Backend-Fehler direkt zurueck. Der Client sieht dann z.B. den letzten 429- oder 500-Body statt eines generischen `all_backends_failed`. Dieses Verhalten kann pro Policy mit `return_last_error_on_exhausted_backends: false` deaktiviert werden.
 
 ```
 Anfrage -> Backend vm -> Connection Error
@@ -83,3 +86,4 @@ Anfrage -> Backend vm -> Connection Error
 | Endlosschleife | Falscher `base_url` | `llm-router check-config` |
 | Alle Backends rot | Netzwerkproblem | `llm-router test-backends` |
 | Ein Backend wird nicht genutzt | Cooldown aktiv | Nach `backend_cooldown_seconds` wird es automatisch wieder versucht |
+| Client haengt trotz Backend-Fehlern | Letzter Fehler wird nicht durchgereicht | `return_last_error_on_exhausted_backends: true` setzen |

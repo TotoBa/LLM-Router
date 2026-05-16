@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-import pytest
-
 from llm_router.backends import resolve_backend_model, backend_order
-from llm_router.config import load_config
 from llm_router.schemas import RouterConfig
 
 

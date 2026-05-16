@@ -119,6 +119,7 @@ policies:
     fallback_on_limit: true
     fallback_on_5xx: true
     fallback_on_4xx: false
+    return_last_error_on_exhausted_backends: true
     timeout_seconds: 300
 ```
 
@@ -131,6 +132,7 @@ policies:
 | `fallback_on_limit` | Fallback bei 429 / Quota / Limit |
 | `fallback_on_5xx` | Fallback bei Serverfehlern |
 | `fallback_on_4xx` | Fallback bei Client-Fehlern (rarely true) |
+| `return_last_error_on_exhausted_backends` | Wenn kein weiteres Backend sofort versucht werden kann, den letzten Backend-Fehler mit Status und Body an den Client zurueckgeben |
 | `timeout_seconds` | Reserviert fuer policy-spezifische Timeouts; aktuell steuert `runtime.request_timeout_seconds` den HTTP-Client-Timeout |
 
 ## Limit Detection

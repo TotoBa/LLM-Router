@@ -35,6 +35,8 @@ def should_fallback(
     if 500 <= status_code < 600 and policy.fallback_on_5xx:
         return True
     if 400 <= status_code < 500:
+        if status_code == 404 and policy.fallback_on_model_not_found:
+            return True
         if body is not None and looks_like_limit_error(status_code, body, config):
             # already handled above
             return False

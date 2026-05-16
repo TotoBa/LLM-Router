@@ -94,6 +94,7 @@ policies:
     fallback_on_5xx: true
     fallback_on_4xx: false
     fallback_on_model_not_found: true
+    return_last_error_on_exhausted_backends: true
     timeout_seconds: 300
 
   long_running:
@@ -106,6 +107,7 @@ policies:
     fallback_on_5xx: true
     fallback_on_4xx: false
     fallback_on_model_not_found: true
+    return_last_error_on_exhausted_backends: true
     timeout_seconds: 900
 
 limit_detection:

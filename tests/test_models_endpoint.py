@@ -1,10 +1,5 @@
 from __future__ import annotations
 
-import pytest
-
-from llm_router.config import load_config
-from llm_router.schemas import RouterConfig
-
 
 def test_models_returns_logical_aliases(client):
     response = client.get("/v1/models")

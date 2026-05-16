@@ -8,7 +8,7 @@ from typing import Any
 
 import httpx
 from fastapi import APIRouter, Header, Request
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse, Response, StreamingResponse
 
 from llm_router.backends import backend_order, resolve_backend_model
 from llm_router.errors import RouterError, error_response
@@ -73,6 +73,50 @@ def _unknown_model_error(model: str) -> JSONResponse:
     return JSONResponse(
         status_code=400,
         content=error_response(f"Unknown model '{model}'", "model_not_found"),
+    )
+
+
+def _router_response_headers(
+    *,
+    backend_name: str,
+    model_alias: str,
+    provider_model: str,
+    fallback_used: bool,
+    returned_last_error: bool = False,
+) -> dict[str, str]:
+    headers = {
+        "x-llm-router-backend": backend_name,
+        "x-llm-router-request-model": model_alias,
+        "x-llm-router-provider-model": provider_model,
+        "x-llm-router-fallback-used": "true" if fallback_used else "false",
+    }
+    if returned_last_error:
+        headers["x-llm-router-returned-last-error"] = "true"
+    return headers
+
+
+def _backend_error_response(
+    *,
+    status_code: int,
+    body: bytes,
+    content_type: str | None,
+    backend_name: str,
+    model_alias: str,
+    provider_model: str,
+    fallback_used: bool,
+) -> Response:
+    media_type = content_type.split(";", 1)[0] if content_type else None
+    return Response(
+        content=body,
+        status_code=status_code,
+        headers=_router_response_headers(
+            backend_name=backend_name,
+            model_alias=model_alias,
+            provider_model=provider_model,
+            fallback_used=fallback_used,
+            returned_last_error=True,
+        ),
+        media_type=media_type,
     )
 
 
@@ -210,7 +254,7 @@ async def list_models() -> dict[str, Any]:
 async def chat_completions(
     request: Request,
     x_llm_client: str = Header(default="unknown"),
-) -> StreamingResponse | JSONResponse:
+) -> StreamingResponse | JSONResponse | Response:
     config = _get_config()
     body_bytes = await request.body()
     try:
@@ -290,12 +334,12 @@ async def chat_completions(
             _record_backend_success(model_alias, backend_name)
             # success
             status_code = proxy_resp.status_code
-            response_headers = {
-                "x-llm-router-backend": backend_name,
-                "x-llm-router-request-model": model_alias,
-                "x-llm-router-provider-model": provider_model,
-                "x-llm-router-fallback-used": "true" if fallback_used else "false",
-            }
+            response_headers = _router_response_headers(
+                backend_name=backend_name,
+                model_alias=model_alias,
+                provider_model=provider_model,
+                fallback_used=fallback_used,
+            )
             logger = _get_logger()
             if logger:
                 log_request(
@@ -361,7 +405,21 @@ async def chat_completions(
             fallback_used = True
             continue
 
-        # final attempt failed or not fallbackable
+        # Final attempt failed or policy disallows another immediate backend.
+        if policy.return_last_error_on_exhausted_backends:
+            content_type = proxy_resp.headers.get("content-type")
+            await proxy_resp.aclose()
+            return _backend_error_response(
+                status_code=proxy_resp.status_code,
+                body=resp_body,
+                content_type=content_type,
+                backend_name=backend_name,
+                model_alias=model_alias,
+                provider_model=provider_model,
+                fallback_used=fallback_used,
+            )
+
+        # Legacy generic router error.
         if proxy_resp.status_code == 404 and config.runtime.unknown_model_strategy != "error":
             return JSONResponse(status_code=404, content=error_response("Model not found on backend", "model_not_found"))
 

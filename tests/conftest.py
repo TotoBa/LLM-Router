@@ -7,7 +7,6 @@ from fastapi.testclient import TestClient
 
 from llm_router.config import load_config
 from llm_router.app import create_app
-from llm_router.schemas import BackendConfig, ModelRouteConfig, PolicyConfig
 
 
 pytest_plugins = ("pytest_asyncio",)

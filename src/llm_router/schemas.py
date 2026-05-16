@@ -36,6 +36,7 @@ class PolicyConfig(BaseModel):
     fallback_on_5xx: bool = False
     fallback_on_4xx: bool = False
     fallback_on_model_not_found: bool = False
+    return_last_error_on_exhausted_backends: bool = True
     timeout_seconds: int = 300
 
 

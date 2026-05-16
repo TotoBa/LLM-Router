@@ -79,3 +79,10 @@ def test_should_fallback_4xx(policy):
     assert should_fallback(429, b"rate limit", False, policy_4xx, config) is True  # limit overrides 4xx
 
     assert should_fallback(400, b"bad request", False, policy, config) is False
+
+
+def test_should_fallback_model_not_found(policy):
+    config = type("C", (), {"limit_detection": LimitDetectionConfig(status_codes=[429], body_markers=[])})
+    policy_model_not_found = policy.model_copy(update={"fallback_on_model_not_found": True})
+    assert should_fallback(404, b"model not found", False, policy_model_not_found, config) is True
+    assert should_fallback(404, b"model not found", False, policy, config) is False

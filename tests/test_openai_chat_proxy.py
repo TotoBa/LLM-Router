@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import pytest
 import respx
+import httpx
 from httpx import Response
+
+pytestmark = pytest.mark.asyncio
 
 
 @pytest.fixture
@@ -45,6 +48,12 @@ models:
       - openai
       - anthropic
     policy: standard
+  legacy-error-model:
+    provider_model: fallback-llm
+    backends:
+      - openai
+      - anthropic
+    policy: legacy_errors
   balanced-model:
     provider_model: balanced-llm
     backends:
@@ -71,6 +80,18 @@ policies:
     fallback_on_5xx: false
     fallback_on_4xx: false
     fallback_on_model_not_found: false
+    timeout_seconds: 300
+  legacy_errors:
+    max_attempts_per_backend: 1
+    max_backend_failures_before_cooldown: 2
+    backend_cooldown_seconds: 300
+    retry_on_connection_error: true
+    retry_on_timeout: false
+    fallback_on_limit: true
+    fallback_on_5xx: true
+    fallback_on_4xx: false
+    fallback_on_model_not_found: false
+    return_last_error_on_exhausted_backends: false
     timeout_seconds: 300
   cooldown:
     max_attempts_per_backend: 1
@@ -106,12 +127,15 @@ def mock_app(mock_config_path):
 
 
 @pytest.fixture
-def mock_client(mock_app):
-    from fastapi.testclient import TestClient
-    return TestClient(mock_app)
+async def mock_client(mock_app):
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=mock_app),
+        base_url="http://test",
+    ) as client:
+        yield client
 
 
-def test_chat_completions_forwarding(mock_client):
+async def test_chat_completions_forwarding(mock_client):
     with respx.mock:
         route = respx.post("https://api.openai.com/v1/chat/completions").mock(
             return_value=Response(200, json={
@@ -121,7 +145,7 @@ def test_chat_completions_forwarding(mock_client):
                 "choices": [{"message": {"role": "assistant", "content": "Hello!"}}]
             })
         )
-        response = mock_client.post(
+        response = await mock_client.post(
             "/v1/chat/completions",
             json={
                 "model": "gpt-4o",
@@ -138,7 +162,7 @@ def test_chat_completions_forwarding(mock_client):
         assert route.called
 
 
-def test_chat_completions_fallback_on_429(mock_client):
+async def test_chat_completions_fallback_on_429(mock_client):
     with respx.mock:
         openai_route = respx.post("https://api.openai.com/v1/chat/completions").mock(
             return_value=Response(429, json={"error": "rate limit"})
@@ -151,7 +175,7 @@ def test_chat_completions_fallback_on_429(mock_client):
                 "choices": [{"message": {"role": "assistant", "content": "Hello from Claude!"}}]
             })
         )
-        response = mock_client.post(
+        response = await mock_client.post(
             "/v1/chat/completions",
             json={
                 "model": "fallback-model",
@@ -167,7 +191,52 @@ def test_chat_completions_fallback_on_429(mock_client):
         assert anthropic_route.called
 
 
-def test_chat_completions_round_robin_distribution(mock_client):
+async def test_chat_completions_returns_last_backend_error_when_exhausted(mock_client):
+    with respx.mock:
+        openai_route = respx.post("https://api.openai.com/v1/chat/completions").mock(
+            return_value=Response(429, json={"error": "openai rate limit"})
+        )
+        anthropic_route = respx.post("https://api.anthropic.com/v1/chat/completions").mock(
+            return_value=Response(429, json={"error": "anthropic rate limit"})
+        )
+        response = await mock_client.post(
+            "/v1/chat/completions",
+            json={
+                "model": "fallback-model",
+                "messages": [{"role": "user", "content": "Hi"}],
+            },
+        )
+
+        assert response.status_code == 429
+        assert response.json() == {"error": "anthropic rate limit"}
+        assert response.headers["x-llm-router-backend"] == "anthropic"
+        assert response.headers["x-llm-router-fallback-used"] == "true"
+        assert response.headers["x-llm-router-returned-last-error"] == "true"
+        assert openai_route.called
+        assert anthropic_route.called
+
+
+async def test_chat_completions_can_disable_last_backend_error_passthrough(mock_client):
+    with respx.mock:
+        respx.post("https://api.openai.com/v1/chat/completions").mock(
+            return_value=Response(429, json={"error": "openai rate limit"})
+        )
+        respx.post("https://api.anthropic.com/v1/chat/completions").mock(
+            return_value=Response(429, json={"error": "anthropic rate limit"})
+        )
+        response = await mock_client.post(
+            "/v1/chat/completions",
+            json={
+                "model": "legacy-error-model",
+                "messages": [{"role": "user", "content": "Hi"}],
+            },
+        )
+
+        assert response.status_code == 503
+        assert response.json()["error"]["type"] == "all_backends_failed"
+
+
+async def test_chat_completions_round_robin_distribution(mock_client):
     with respx.mock:
         respx.post("https://api.openai.com/v1/chat/completions").mock(
             return_value=Response(200, json={
@@ -186,11 +255,11 @@ def test_chat_completions_round_robin_distribution(mock_client):
             })
         )
 
-        first = mock_client.post(
+        first = await mock_client.post(
             "/v1/chat/completions",
             json={"model": "balanced-model", "messages": [{"role": "user", "content": "Hi"}]},
         )
-        second = mock_client.post(
+        second = await mock_client.post(
             "/v1/chat/completions",
             json={"model": "balanced-model", "messages": [{"role": "user", "content": "Hi"}]},
         )
@@ -203,7 +272,7 @@ def test_chat_completions_round_robin_distribution(mock_client):
         assert second.headers["x-llm-router-fallback-used"] == "false"
 
 
-def test_chat_completions_skips_backend_during_cooldown(mock_client):
+async def test_chat_completions_skips_backend_during_cooldown(mock_client):
     with respx.mock:
         openai_route = respx.post("https://api.openai.com/v1/chat/completions").mock(
             return_value=Response(500, json={"error": "internal error"})
@@ -217,11 +286,11 @@ def test_chat_completions_skips_backend_during_cooldown(mock_client):
             })
         )
 
-        first = mock_client.post(
+        first = await mock_client.post(
             "/v1/chat/completions",
             json={"model": "cooldown-model", "messages": [{"role": "user", "content": "Hi"}]},
         )
-        second = mock_client.post(
+        second = await mock_client.post(
             "/v1/chat/completions",
             json={"model": "cooldown-model", "messages": [{"role": "user", "content": "Hi"}]},
         )
@@ -236,7 +305,7 @@ def test_chat_completions_skips_backend_during_cooldown(mock_client):
         assert anthropic_route.call_count == 2
 
 
-def test_chat_completions_model_mapping(mock_client):
+async def test_chat_completions_model_mapping(mock_client):
     with respx.mock:
         route = respx.post("https://api.anthropic.com/v1/chat/completions").mock(
             return_value=Response(200, json={
@@ -246,7 +315,7 @@ def test_chat_completions_model_mapping(mock_client):
                 "choices": [{"message": {"role": "assistant", "content": "Hello!"}}]
             })
         )
-        response = mock_client.post(
+        response = await mock_client.post(
             "/v1/chat/completions",
             json={
                 "model": "claude-opus",
@@ -260,21 +329,19 @@ def test_chat_completions_model_mapping(mock_client):
         assert route.called
 
 
-def test_chat_completions_all_backends_fail(mock_client):
+async def test_chat_completions_all_backends_fail(mock_client):
     with respx.mock:
-        respx.post("https://api.openai.com/v1/chat/completions").mock(
-            return_value=Response(500, json={"error": "internal error"})
-        )
         respx.post("https://api.anthropic.com/v1/chat/completions").mock(
             return_value=Response(500, json={"error": "internal error"})
         )
-        response = mock_client.post(
+        response = await mock_client.post(
             "/v1/chat/completions",
             json={
                 "model": "claude-opus",
                 "messages": [{"role": "user", "content": "Hi"}]
             }
         )
-        assert response.status_code == 503
-        data = response.json()
-        assert "error" in data
+        assert response.status_code == 500
+        assert response.json() == {"error": "internal error"}
+        assert response.headers["x-llm-router-backend"] == "anthropic"
+        assert response.headers["x-llm-router-returned-last-error"] == "true"

@@ -175,6 +175,7 @@ policies:
     fallback_on_limit: true
     fallback_on_5xx: true
     fallback_on_4xx: false
+    return_last_error_on_exhausted_backends: true
     timeout_seconds: 300
 
 limit_detection:
@@ -191,6 +192,8 @@ logging:
 ```
 
 Für langsame lokale LLMs kann `runtime.request_timeout_seconds: null` gesetzt bleiben. Dann begrenzt der Router nur den Verbindungsaufbau, bricht eine laufende Antwort aber nicht wegen eines Read-Timeouts ab.
+
+Wenn alle sofort nutzbaren Backends mit Fehlern antworten, gibt der Router standardmaessig den letzten Backend-Fehler unveraendert an den Client zurueck. Das verhindert, dass Clients wie Kimi auf einen generischen Router-Fehler warten oder unklar weiterlaufen. Pro Policy kann das mit `return_last_error_on_exhausted_backends: false` deaktiviert werden.
 
 ---
 

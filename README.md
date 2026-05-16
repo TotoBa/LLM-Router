@@ -190,6 +190,8 @@ logging:
   log_headers: false
 ```
 
+Für langsame lokale LLMs kann `runtime.request_timeout_seconds: null` gesetzt bleiben. Dann begrenzt der Router nur den Verbindungsaufbau, bricht eine laufende Antwort aber nicht wegen eines Read-Timeouts ab.
+
 ---
 
 ## Sicherheit

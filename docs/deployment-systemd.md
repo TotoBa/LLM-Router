@@ -61,6 +61,7 @@ Danach `configs/router.local.yaml` anpassen:
 - `OLLAMA_PI_IP` durch die Pi-IP ersetzen
 - Modelle auf das setzen, was auf beiden Ollama-Hosts verfuegbar ist
 - `server.host` auf `0.0.0.0`, wenn andere Rechner den Router erreichen sollen
+- `runtime.request_timeout_seconds: null` beibehalten, wenn lange LLM-Antworten nicht vom Router abgebrochen werden sollen
 
 Config pruefen:
 

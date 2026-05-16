@@ -24,6 +24,18 @@ nano configs/router.local.yaml
 
 `configs/router.local.yaml` ist in `.gitignore` – eure echte Config landet nie im Repository.
 
+## Runtime
+
+```yaml
+runtime:
+  request_timeout_seconds: null
+  connect_timeout_seconds: 10
+```
+
+- `request_timeout_seconds: null` oder `0` bedeutet: kein Timeout fuer einen laufenden Backend-Request. Das ist fuer lokale oder langsame LLMs sinnvoll, weil der Router nicht abbrechen soll, solange das Backend die Verbindung haelt.
+- `connect_timeout_seconds` begrenzt nur den Verbindungsaufbau. Damit werden tote Hosts weiter schnell erkannt und Fallback kann greifen.
+- Ein positiver Wert fuer `request_timeout_seconds` setzt wieder einen Read/Write/Pool-Timeout fuer Backend-Requests.
+
 ## Server
 
 ```yaml
@@ -119,7 +131,7 @@ policies:
 | `fallback_on_limit` | Fallback bei 429 / Quota / Limit |
 | `fallback_on_5xx` | Fallback bei Serverfehlern |
 | `fallback_on_4xx` | Fallback bei Client-Fehlern (rarely true) |
-| `timeout_seconds` | Harter Timeout pro Backend-Request |
+| `timeout_seconds` | Reserviert fuer policy-spezifische Timeouts; aktuell steuert `runtime.request_timeout_seconds` den HTTP-Client-Timeout |
 
 ## Limit Detection
 

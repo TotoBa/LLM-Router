@@ -13,6 +13,12 @@ from llm_router.openai_compat import router as openai_router, set_config, set_ht
 from llm_router.schemas import RouterConfig
 
 
+def _optional_timeout_seconds(value: int | None) -> float | None:
+    if value is None or value <= 0:
+        return None
+    return float(value)
+
+
 def create_app(config: RouterConfig | None = None) -> FastAPI:
     """Create a FastAPI app with the given (or loaded) configuration."""
     if config is None:
@@ -23,8 +29,8 @@ def create_app(config: RouterConfig | None = None) -> FastAPI:
     logger = init_logger(config)
     httpx_client = httpx.AsyncClient(
         timeout=httpx.Timeout(
-            config.runtime.request_timeout_seconds,
-            connect=config.runtime.connect_timeout_seconds,
+            timeout=_optional_timeout_seconds(config.runtime.request_timeout_seconds),
+            connect=_optional_timeout_seconds(config.runtime.connect_timeout_seconds),
         )
     )
 

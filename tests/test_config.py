@@ -15,6 +15,57 @@ def test_load_example_config(example_config_path: Path):
     assert config.backends["hugging"].enabled is False
 
 
+def test_null_request_timeout_means_no_long_running_deadline(tmp_path: Path):
+    config_content = """
+server:
+  host: "127.0.0.1"
+  port: 18080
+
+runtime:
+  request_timeout_seconds: null
+  connect_timeout_seconds: 10
+
+backends:
+  openai:
+    type: openai_compatible
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+    priority: 10
+
+models:
+  gpt-4o:
+    provider_model: gpt-4o
+    backends:
+      - openai
+    policy: standard
+
+policies:
+  standard:
+    max_attempts_per_backend: 1
+
+limit_detection:
+  status_codes: [429]
+  body_markers: []
+
+logging:
+  level: INFO
+"""
+    path = tmp_path / "router.yaml"
+    path.write_text(config_content)
+    config = load_config(path)
+    assert config.runtime.request_timeout_seconds is None
+    assert config.runtime.connect_timeout_seconds == 10
+
+    from llm_router.app import create_app
+
+    app = create_app(config=config)
+    timeout = app.state.httpx_client.timeout
+    assert timeout.connect == 10
+    assert timeout.read is None
+    assert timeout.write is None
+    assert timeout.pool is None
+
+
 def test_missing_backend_in_model_config(tmp_path: Path):
     config_content = """
 server:

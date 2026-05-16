@@ -34,6 +34,7 @@ In `configs/router.local.yaml`:
 - `provider_model`-Werte an `ollama list` anpassen
 - `server.host: "0.0.0.0"` setzen, wenn Clients aus dem LAN zugreifen
 - `routing_strategy: "round_robin"` aktiv lassen, wenn ueber alle Backends verteilt werden soll
+- `runtime.request_timeout_seconds: null` aktiv lassen, damit lange LLM-Antworten nicht vom Router abgebrochen werden
 
 ## Autostart auf der VM
 

@@ -54,7 +54,7 @@ class LoggingConfig(BaseModel):
 
 
 class RuntimeConfig(BaseModel):
-    request_timeout_seconds: int = 600
+    request_timeout_seconds: int | None = None
     connect_timeout_seconds: int = 10
     reload_config_on_request: bool = False
     unknown_model_strategy: str = "error"

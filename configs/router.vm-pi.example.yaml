@@ -4,7 +4,7 @@ server:
   require_api_key: false
 
 runtime:
-  request_timeout_seconds: 600
+  request_timeout_seconds: null
   connect_timeout_seconds: 10
   reload_config_on_request: false
   unknown_model_strategy: "error"

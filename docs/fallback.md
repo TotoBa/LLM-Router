@@ -12,7 +12,7 @@ Der Router versucht Backends in der konfigurierten Reihenfolge. Wenn ein Backend
 | Quota überschritten | 402 | `fallback_on_limit` |
 | Limit-Erkennung in Body | 403 + Marker | `fallback_on_limit` |
 | Verbindungsfehler | — | `retry_on_connection_error` |
-| Timeout | — | `retry_on_timeout` |
+| Timeout beim Verbindungsaufbau | — | `retry_on_timeout` |
 | Server-Fehler | 5xx | `fallback_on_5xx` |
 
 ### Standardmaessig kein Fallback bei:
@@ -54,6 +54,8 @@ policies:
 Damit wird ein Backend bei Verbindungsfehlern bis zu zweimal im selben Request versucht. Nach zwei fehlgeschlagenen Backend-Versuchen wird es fuer 300 Sekunden uebersprungen. Danach wird es automatisch wieder versucht.
 
 HTTP-Fehler wie 429 oder 5xx werden nicht auf demselben Backend wiederholt, sondern zaehlen als fehlgeschlagener Backend-Versuch und fuehren bei passender Policy direkt zum Fallback.
+
+Fuer lange lokale LLM-Laeufe sollte `runtime.request_timeout_seconds: null` gesetzt bleiben. Dann bricht der Router eine laufende Antwort nicht wegen eines Read-Timeouts ab; nur der Verbindungsaufbau bleibt ueber `connect_timeout_seconds` begrenzt.
 
 ```
 Anfrage -> Backend vm -> Connection Error

@@ -9,14 +9,14 @@ Du hast mehrere LLM-Backends (z.B. Ollama lokal, Ollama auf einem RasPi, später
 Der Router schafft eine Abstraktionsschicht:
 
 ```
-Dein Tool → "chess-small" → LLM-Router → Backend "local" (gemma4:e4b)
-                                falls down → Backend "pi" (gemma4:e4b)
+Dein Tool -> "chess-small" -> LLM-Router -> Backend "vm" (deepseek-v4-flash:cloud)
+                                falls down -> Backend "pi" (deepseek-v4-flash:cloud)
 ```
 
 ## Features
 
 - **OpenAI-compatible API** – `/v1/chat/completions`, `/v1/models`, `/health`
-- **Modell-Aliase** – dein Tool fragt `chess-small`, der Router weiß, dass `gemma4:e4b` gemeint ist
+- **Modell-Aliase** – dein Tool fragt `chess-small`, der Router weiß, welches Provider-Modell gemeint ist
 - **Backend-Fallback** – bei Rate-Limits, Verbindungsfehlern oder Crashs automatisch nächstes Backend
 - **Streaming** – SSE-Stream wird transparent durchgereicht (wichtig für Kimi CLI)
 - **JSONL-Logging** – jede Anfrage wird protokolliert, ohne Prompt-Inhalte (standardmäßig)
@@ -63,6 +63,11 @@ curl http://127.0.0.1:18080/v1/models
 ```bash
 llm-router smoke-test --model default --prompt "Antworte nur OK."
 ```
+
+Für einen dauerhaften Router-VM + Pi-Ollama Rollout siehe:
+
+- [VM + Pi Rollout](docs/rollout-vm-pi.md)
+- [systemd-Deployment](docs/deployment-systemd.md)
 
 ---
 
@@ -149,14 +154,14 @@ backends:
 
 models:
   default:
-    provider_model: "llama3.1:8b"
+    provider_model: "deepseek-v4-flash:cloud"
     backends: ["local", "pi"]
     policy: "standard"
 
   chess-small:
-    provider_model: "gemma4:e4b"
+    provider_model: "deepseek-v4-flash:cloud"
     backends: ["local", "pi"]
-    policy: "fast"
+    policy: "standard"
 
 policies:
   standard:
@@ -216,6 +221,7 @@ logging:
 - [Fallback](docs/fallback.md) – Fehlerbehandlung
 - [Logging](docs/logging.md) – Logs und Datenschutz
 - [systemd-Deployment](docs/deployment-systemd.md) – Autostart
+- [VM + Pi Rollout](docs/rollout-vm-pi.md) – Beispielhafter Betrieb auf zwei Hosts
 - [Security](docs/security.md) – Best Practices
 
 ---

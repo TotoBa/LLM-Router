@@ -1,75 +1,59 @@
 server:
-  host: "127.0.0.1"
+  host: "0.0.0.0"
   port: 18080
+  require_api_key: false
 
 runtime:
-  request_timeout_seconds: 900
+  request_timeout_seconds: 600
   connect_timeout_seconds: 10
   reload_config_on_request: false
   unknown_model_strategy: "error"
 
 backends:
-  local:
+  vm:
     type: "openai_compatible"
     base_url: "http://127.0.0.1:11434/v1"
-    api_key_env: "OLLAMA_LOCAL_API_KEY"
     priority: 10
     enabled: true
 
   pi:
     type: "openai_compatible"
     base_url: "http://OLLAMA_PI_IP:11434/v1"
-    api_key_env: "OLLAMA_PI_API_KEY"
     priority: 20
     enabled: true
 
 models:
+  default:
+    provider_model: "deepseek-v4-flash:cloud"
+    backends: ["vm", "pi"]
+    policy: "standard"
+
   kimi-cli-default:
     provider_model: "kimi-k2.6:cloud"
-    backends: ["local", "pi"]
-    policy: "interactive"
+    backends: ["vm", "pi"]
+    policy: "standard"
 
   chess-router:
     provider_model: "deepseek-v4-flash:cloud"
-    backends: ["local", "pi"]
+    backends: ["vm", "pi"]
     policy: "standard"
 
   chess-small:
     provider_model: "deepseek-v4-flash:cloud"
-    backends: ["local", "pi"]
+    backends: ["vm", "pi"]
     policy: "standard"
 
   chess-large:
     provider_model: "gemma4:31b-cloud"
-    backends: ["local", "pi"]
+    backends: ["vm", "pi"]
     policy: "long_running"
 
   chess-task:
     provider_model: "deepseek-v4-pro:cloud"
-    backends: ["local", "pi"]
+    backends: ["vm", "pi"]
     policy: "standard"
 
 policies:
-  interactive:
-    max_attempts_per_backend: 1
-    retry_on_connection_error: true
-    retry_on_timeout: false
-    fallback_on_limit: true
-    fallback_on_5xx: true
-    fallback_on_4xx: false
-    fallback_on_model_not_found: false
-    timeout_seconds: 300
-
-  fast:
-    max_attempts_per_backend: 1
-    retry_on_connection_error: true
-    retry_on_timeout: false
-    fallback_on_limit: true
-    fallback_on_5xx: false
-    fallback_on_4xx: false
-    fallback_on_model_not_found: false
-    timeout_seconds: 120
-
   standard:
     max_attempts_per_backend: 1
     retry_on_connection_error: true
@@ -77,7 +61,7 @@ policies:
     fallback_on_limit: true
     fallback_on_5xx: true
     fallback_on_4xx: false
-    fallback_on_model_not_found: false
+    fallback_on_model_not_found: true
     timeout_seconds: 300
 
   long_running:

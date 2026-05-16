@@ -58,11 +58,19 @@ sudo systemctl restart ollama
 
 Vom Hauptrechner testen:
 ```bash
-curl http://PI-IP:11434/api/tags
-curl http://PI-IP:11434/v1/models
+curl http://OLLAMA_PI_IP:11434/api/tags
+curl http://OLLAMA_PI_IP:11434/v1/models
 ```
 
-⚠️ Sicherheitsregel: Kein Port-Forwarding ins Internet! Nur Heimnetz.
+Sicherheitsregel: Kein Port-Forwarding ins Internet. Nur Heimnetz oder VPN.
+
+Wenn der Pi als dauerhaftes Backend laufen soll, muss der Dienst aktiviert sein:
+
+```bash
+sudo systemctl enable --now ollama
+systemctl is-enabled ollama
+systemctl is-active ollama
+```
 
 ## Healthcheck der Backends
 
@@ -70,4 +78,4 @@ curl http://PI-IP:11434/v1/models
 llm-router test-backends --config configs/router.local.yaml
 ```
 
-Dies ruft pro Backend `GET /v1/models` auf und zeigt an, ob es antwortet.
+Dies ruft pro Backend `GET <base_url>/models` auf. Bei einer Ollama-Config mit `base_url: http://OLLAMA_PI_IP:11434/v1` ist das also `GET /v1/models`.

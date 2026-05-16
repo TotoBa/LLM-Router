@@ -25,6 +25,7 @@ Willkommen! Diese Doku richtet sich an alle, die den Router einrichten, konfigur
 | [Fallback](fallback.md) | Was passiert bei Fehlern? |
 | [Logging](logging.md) | Logs lesen, Fehler finden |
 | [Deployment](deployment-systemd.md) | systemd-Service einrichten |
+| [VM + Pi Rollout](rollout-vm-pi.md) | Beispielhafter Router-Rollout ohne Credentials |
 | [Security](security.md) | Secrets, Netzwerk, Best Practices |
 
 ## Häufige Fragen

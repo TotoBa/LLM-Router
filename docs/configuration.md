@@ -39,19 +39,18 @@ backends:
   local:
     type: "openai_compatible"
     base_url: "http://127.0.0.1:11434/v1"
-    api_key_env: "OLLAMA_LOCAL_API_KEY"
     priority: 10        # Niedriegere Zahl = höhere Priorität
     enabled: true
 
   pi:
     type: "openai_compatible"
     base_url: "http://192.168.178.50:11434/v1"
-    api_key_env: "OLLAMA_PI_API_KEY"
     priority: 20
     enabled: true
 ```
 
-- `api_key_env` enthält den **Namen** der Env-Variablen, nicht den Key selbst
+- `base_url` zeigt auf die OpenAI-kompatible API, bei Ollama also mit `/v1`
+- `api_key_env` ist optional; falls gesetzt, enthält es den Namen der Env-Variablen, nicht den Key selbst
 - `priority` sortiert: niedrigere Zahl = höhere Priorität
 - `enabled: false` deaktiviert das Backend komplett
 
@@ -60,19 +59,20 @@ backends:
 ```yaml
 models:
   chess-small:
-    provider_model: "gemma4:e4b"
+    provider_model: "deepseek-v4-flash:cloud"
     backends: ["local", "pi"]
-    policy: "fast"
+    policy: "standard"
 
   chess-large:
-    provider_model: "gemma4:26b"
+    provider_model: "gemma4:31b-cloud"
     backends: ["local", "pi"]
     policy: "long_running"
 ```
 
 - **Logisches Modell** (`chess-small`) ist das, was der Client anfragt
-- **Provider-Modell** (`gemma4:e4b`) ist das, was das Backend versteht
+- **Provider-Modell** (`deepseek-v4-flash:cloud`) ist das, was das Backend versteht
 - **Backends**: Reihenfolge ist Fallback-Reihenfolge. Fehlt sie, werden alle `enabled` Backends nach `priority` sortiert.
+- Provider-Modelle muessen auf jedem Backend verfuegbar sein, das in `backends` genannt ist
 
 ## Policies
 
@@ -122,7 +122,7 @@ logging:
   log_headers: false
 ```
 
-⚠️ **Standardmäßig werden keine Prompts oder Antworten geloggt.** Für Debugging lokal freischaltbar.
+Hinweis: Standardmäßig werden keine Prompts oder Antworten geloggt. Für Debugging lokal freischaltbar.
 
 ## Env-Variablen
 
@@ -133,3 +133,5 @@ LLM_ROUTER_CONFIG=configs/router.local.yaml
 ```
 
 Erstelle `.env` im Projekt-Root – es wird nicht eingecheckt.
+
+Ollama ignoriert den Wert eines Bearer-Tokens normalerweise. Fuer reine Ollama-Backends kann `api_key_env` daher weggelassen werden; manche OpenAI-Clients erwarten trotzdem einen API-Key-Wert in ihrer eigenen Konfiguration.

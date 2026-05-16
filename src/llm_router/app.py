@@ -6,7 +6,7 @@ import httpx
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
-from llm_router.config import load_config, resolve_api_key
+from llm_router.config import load_config
 from llm_router.errors import RouterError, error_response
 from llm_router.logging_jsonl import init_logger
 from llm_router.openai_compat import router as openai_router, set_config, set_http_client, set_logger

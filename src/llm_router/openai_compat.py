@@ -11,8 +11,9 @@ from fastapi.responses import JSONResponse, StreamingResponse
 
 from llm_router.backends import backend_order, resolve_backend_model
 from llm_router.errors import RouterError, error_response
-from llm_router.fallback import should_fallback
-from llm_router.schemas import BackendConfig, RouterConfig
+from llm_router.fallback import looks_like_limit_error, should_fallback
+from llm_router.logging_jsonl import log_request
+from llm_router.schemas import BackendConfig, PolicyConfig, RouterConfig
 
 router = APIRouter()
 
@@ -62,6 +63,12 @@ def _unknown_model_error(model: str) -> JSONResponse:
         status_code=400,
         content=error_response(f"Unknown model '{model}'", "model_not_found"),
     )
+
+
+def _route_policy(model_alias: str, config: RouterConfig) -> PolicyConfig:
+    route = config.models.get(model_alias)
+    policy_name = route.policy if route else "default"
+    return config.policies.get(policy_name) or next(iter(config.policies.values()))
 
 
 @router.get("/health", response_model=None)
@@ -123,7 +130,7 @@ async def chat_completions(
     stream = payload.get("stream", False)
     client = x_llm_client
     fallback_used = False
-    last_response: httpx.Response | None = None
+    request_started = time.monotonic()
 
     for attempt, backend_name in enumerate(backends):
         backend = config.backends[backend_name]
@@ -148,17 +155,42 @@ async def chat_completions(
                     headers=_build_headers(backend, None),
                 )
         except (httpx.ConnectError, httpx.ConnectTimeout):
-            last_response = None
-            route = config.models.get(model_alias)
-            policy_name = route.policy if route else "default"
-            policy = config.policies.get(policy_name) or next(iter(config.policies.values()))
+            policy = _route_policy(model_alias, config)
             is_last = attempt == len(backends) - 1
+            duration_ms = (time.monotonic() - request_started) * 1000
+            logger = _get_logger()
             if not is_last and should_fallback(0, None, True, policy, config):
+                if logger:
+                    log_request(
+                        logger,
+                        request_id=request_id,
+                        client=client,
+                        path="/v1/chat/completions",
+                        request_model=model_alias,
+                        provider_model=provider_model,
+                        backend=backend_name,
+                        status_code=None,
+                        limit_detected=False,
+                        fallback_used=False,
+                        duration_ms=duration_ms,
+                    )
                 fallback_used = True
                 continue
+            if logger:
+                log_request(
+                    logger,
+                    request_id=request_id,
+                    client=client,
+                    path="/v1/chat/completions",
+                    request_model=model_alias,
+                    provider_model=provider_model,
+                    backend=backend_name,
+                    status_code=None,
+                    limit_detected=False,
+                    fallback_used=fallback_used,
+                    duration_ms=duration_ms,
+                )
             return JSONResponse(status_code=503, content=error_response("Connection error to all backends", "connection_error"))
-
-        last_response = proxy_resp
 
         if proxy_resp.status_code < 300:
             # success
@@ -169,6 +201,21 @@ async def chat_completions(
                 "x-llm-router-provider-model": provider_model,
                 "x-llm-router-fallback-used": "true" if fallback_used else "false",
             }
+            logger = _get_logger()
+            if logger:
+                log_request(
+                    logger,
+                    request_id=request_id,
+                    client=client,
+                    path="/v1/chat/completions",
+                    request_model=model_alias,
+                    provider_model=provider_model,
+                    backend=backend_name,
+                    status_code=status_code,
+                    limit_detected=False,
+                    fallback_used=fallback_used,
+                    duration_ms=(time.monotonic() - request_started) * 1000,
+                )
 
             if stream:
                 async def _stream_response(resp: httpx.Response) -> Any:
@@ -190,12 +237,26 @@ async def chat_completions(
             )
 
         # error path – decide whether to fallback
-        route = config.models.get(model_alias)
-        policy_name = route.policy if route else "default"
-        policy = config.policies.get(policy_name) or next(iter(config.policies.values()))
+        policy = _route_policy(model_alias, config)
         is_last = attempt == len(backends) - 1
 
         resp_body = await proxy_resp.aread()
+        limit_detected = looks_like_limit_error(proxy_resp.status_code, resp_body, config)
+        logger = _get_logger()
+        if logger:
+            log_request(
+                logger,
+                request_id=request_id,
+                client=client,
+                path="/v1/chat/completions",
+                request_model=model_alias,
+                provider_model=provider_model,
+                backend=backend_name,
+                status_code=proxy_resp.status_code,
+                limit_detected=limit_detected,
+                fallback_used=False,
+                duration_ms=(time.monotonic() - request_started) * 1000,
+            )
         if not is_last and should_fallback(proxy_resp.status_code, resp_body, False, policy, config):
             fallback_used = True
             continue

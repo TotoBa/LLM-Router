@@ -15,10 +15,10 @@ Der Router versucht Backends in der konfigurierten Reihenfolge. Wenn ein Backend
 | Timeout | — | `retry_on_timeout` |
 | Server-Fehler | 5xx | `fallback_on_5xx` |
 
-### KEIN Fallback bei:
+### Standardmaessig kein Fallback bei:
 
 - 400 Bad Request (Client-Fehler)
-- 404 Model not found (außer via speziellem Flag – nicht in v0.1)
+- 404 Model not found, sofern `fallback_on_model_not_found: false`
 - Unbekanntes Modell ohne Default (je nach `unknown_model_strategy`)
 
 ## Limit-Erkennung
@@ -37,26 +37,26 @@ limit_detection:
 
 ## Retry vs. Fallback
 
-- **Retry** = dasselbe Backend nochmal versuchen (z.B. bei Connection-Error)
+- **Retry** = dasselbe Backend nochmal versuchen
 - **Fallback** = nächstes Backend in der Reihenfolge wählen
 
+In Version 0.1 wird pro Backend praktisch ein Versuch gemacht; Verbindungsfehler fuehren bei aktivierter Policy direkt zum naechsten Backend.
+
 ```
-Anfrage → Backend local (1. Versuch) → Connection Error
-                        |
-              ja, retry_count < max | nein
-                        |
-              Wiederholung --------→ Fallback zu nächstem Backend
+Anfrage -> Backend vm -> Connection Error
+                     |
+                     +-> Backend pi
 ```
 
 ## Beispiel-Log
 
 ```json
-{"ts":"2026-05-16T20:15:30+02:00","request_id":"01HY...","client":"chess-system",
- "request_model":"chess-large","provider_model":"gemma4:26b","backend":"local",
+{"timestamp":1778962130.123,"request_id":"01HY...","client":"chess-system",
+ "request_model":"chess-large","provider_model":"gemma4:31b-cloud","backend":"vm",
  "status_code":429,"limit_detected":true,"fallback_used":false,"duration_ms":823}
 
-{"ts":"2026-05-16T20:15:31+02:00","request_id":"01HY...","client":"chess-system",
- "request_model":"chess-large","provider_model":"gemma4:26b","backend":"pi",
+{"timestamp":1778962131.456,"request_id":"01HY...","client":"chess-system",
+ "request_model":"chess-large","provider_model":"gemma4:31b-cloud","backend":"pi",
  "status_code":200,"limit_detected":false,"fallback_used":true,"duration_ms":5720}
 ```
 

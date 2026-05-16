@@ -2,17 +2,17 @@
 
 ## JSONL-Format
 
-Jede Anfrage erzeugt mindestens einen Eintrag in `logs/llm-router.jsonl`:
+Wenn `logging.jsonl_path` gesetzt ist, erzeugt jeder Backend-Versuch einen JSONL-Eintrag. Bei Fallback entstehen also mindestens zwei Eintraege: der fehlgeschlagene Versuch und der erfolgreiche Fallback.
 
 ```json
 {
-  "ts": "2026-05-16T20:15:30+02:00",
+  "timestamp": 1778962130.123,
   "request_id": "01HY...",
   "client": "chess-system",
   "path": "/v1/chat/completions",
   "request_model": "chess-large",
-  "provider_model": "gemma4:26b",
-  "backend": "local",
+  "provider_model": "gemma4:31b-cloud",
+  "backend": "vm",
   "status_code": 429,
   "limit_detected": true,
   "fallback_used": false,

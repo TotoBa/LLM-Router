@@ -11,7 +11,7 @@ default_model = "kimi-cli-default"
 
 [providers.local-llm-router]
 type = "openai_legacy"
-base_url = "http://127.0.0.1:18080/v1"
+base_url = "http://ROUTER_VM_IP:18080/v1"
 api_key = "ollama"
 
 [models.kimi-cli-default]
@@ -21,7 +21,7 @@ max_context_size = 131072
 capabilities = ["thinking"]
 ```
 
-Kimi interpretiert `openai_legacy` als OpenAI-kompatiblen Provider. Der Wert von `api_key` wird an den Router gesendet; der Router wiederum ersetzt ihn durch den Env-Key des jeweiligen Backends.
+Kimi interpretiert `openai_legacy` als OpenAI-kompatiblen Provider. Der Wert von `api_key` wird an den Router gesendet. Fuer lokale Ollama-Backends ist der Wert normalerweise nur ein Client-Platzhalter.
 
 ## Router-Konfiguration
 
@@ -30,9 +30,9 @@ Stelle sicher, dass `configs/router.local.yaml` folgendes Modell definiert:
 ```yaml
 models:
   kimi-cli-default:
-    provider_model: "kimi-k2.5:cloud"
-    backends: ["local", "pi"]
-    policy: "interactive"
+    provider_model: "kimi-k2.6:cloud"
+    backends: ["vm", "pi"]
+    policy: "standard"
 ```
 
 Wichtig: Der Modellname in `config.toml` (`kimi-cli-default`) muss ein bekannter Alias im Router sein.

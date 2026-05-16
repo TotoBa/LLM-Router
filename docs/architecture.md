@@ -18,7 +18,7 @@ Der LLM-Router ist ein **generisches, lokales LLM-Gateway** mit einer OpenAI-kom
                  │
        ┌─────────▼─────────┐
        │   LLM-Router        │
-       │   127.0.0.1:18080   │
+       │   ROUTER_VM_IP:18080 │
        └─────────┬───────────┘
                  │
        ┌─────────┴─────────┐
@@ -38,7 +38,7 @@ Der LLM-Router ist ein **generisches, lokales LLM-Gateway** mit einer OpenAI-kom
 | **Router** | FastAPI-App mit OpenAI-kompatiblen Endpunkten |
 | **Backend** | OpenAI-kompatibler Server (Ollama, OpenRouter, ...) |
 | **Policy** | Verhaltensregeln: Retry, Timeout, Fallback-Bedingungen |
-| **Logger** | JSONL-Logs für jede Anfrage (ohne Prompt-Inhalte) |
+| **Logger** | JSONL-Logs fuer Anfragen, wenn `logging.jsonl_path` gesetzt ist |
 
 ## Flow einer Anfrage
 
@@ -47,13 +47,13 @@ Der LLM-Router ist ein **generisches, lokales LLM-Gateway** mit einer OpenAI-kom
    ├─ model "chess-small" empfangen
    ├─ Client "chess-system" erkannt
 2. Routing
-   ├─ "chess-small" → provider_model: "gemma4:e4b"
-   ├─ Backends: [local, pi]
-3. Backend-Call #1 (local)
-   ├─ Request an local Ollama mit model "gemma4:e4b"
+   ├─ "chess-small" → provider_model: "deepseek-v4-flash:cloud"
+   ├─ Backends: [vm, pi]
+3. Backend-Call #1 (vm)
+   ├─ Request an lokales VM-Ollama mit model "deepseek-v4-flash:cloud"
    ├─ 429 zurück → Limit erkannt
 4. Fallback → Backend-Call #2 (pi)
-   ├─ Request an Pi-Ollama mit model "gemma4:e4b"
+   ├─ Request an Pi-Ollama mit model "deepseek-v4-flash:cloud"
    ├─ 200 OK
 5. Antwort + Header
    ├─ Original-Response zurück

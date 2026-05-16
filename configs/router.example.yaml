@@ -18,14 +18,14 @@ backends:
 
   pi:
     type: "openai_compatible"
-    base_url: "http://PI-IP:11434/v1"
+    base_url: "http://OLLAMA_PI_IP:11434/v1"
     api_key_env: "OLLAMA_PI_API_KEY"
     priority: 20
     enabled: true
 
 models:
   default:
-    provider_model: "llama3.1:8b"
+    provider_model: "deepseek-v4-flash:cloud"
     backends: ["local", "pi"]
     policy: "standard"
 

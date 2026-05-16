@@ -9,8 +9,7 @@ import httpx
 import typer
 import uvicorn
 
-from llm_router.app import app
-from llm_router.config import load_config, resolve_api_key
+from llm_router.config import load_config
 from llm_router.schemas import RouterConfig
 
 cli = typer.Typer()
@@ -73,7 +72,7 @@ def test_backends(
             for name, backend in cfg.backends.items():
                 try:
                     resp = await client.get(
-                        f"{backend.base_url.rstrip('/')}/health",
+                        f"{backend.base_url.rstrip('/')}/models",
                         timeout=10,
                     )
                     typer.echo(f"{name}: {resp.status_code} {resp.status_code < 300}")
@@ -116,5 +115,9 @@ def smoke_test(
     asyncio.run(_run())
 
 
-if __name__ == "__main__":
+def main() -> None:
     cli()
+
+
+if __name__ == "__main__":
+    main()

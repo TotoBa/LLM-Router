@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import logging
 import time
+from pathlib import Path
 from typing import Any
 
 from llm_router.schemas import RouterConfig
@@ -18,11 +19,17 @@ class _JSONFormatter(logging.Formatter):
 def init_logger(config: RouterConfig) -> logging.Logger:
     logger = logging.getLogger("llm_router")
     logger.setLevel(getattr(logging, config.logging.level.upper(), logging.INFO))
-    if not logger.handlers:
-        handler = logging.StreamHandler()
-        handler.setFormatter(_JSONFormatter())
-        logger.addHandler(handler)
+    for existing_handler in logger.handlers:
+        existing_handler.close()
+    logger.handlers.clear()
+    logger.propagate = False
+
+    handler = logging.StreamHandler()
+    handler.setFormatter(_JSONFormatter())
+    logger.addHandler(handler)
+
     if config.logging.jsonl_path:
+        Path(config.logging.jsonl_path).parent.mkdir(parents=True, exist_ok=True)
         fh = logging.FileHandler(config.logging.jsonl_path)
         fh.setFormatter(_JSONFormatter())
         logger.addHandler(fh)

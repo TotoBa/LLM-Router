@@ -27,6 +27,8 @@ server:
 
 Erst mit Bedacht auf `0.0.0.0` umstellen.
 
+Wenn der Router im LAN auf `0.0.0.0` lauscht, sollte er nur in einem vertrauenswuerdigen Netz oder hinter VPN/Firewall erreichbar sein. Keine Router- oder Ollama-Ports ins Internet weiterleiten.
+
 ## Optionale Router-API-Key
 
 Später kann der Router selbst einen API-Key fordern:
@@ -43,3 +45,4 @@ Für lokalen Betrieb ist das zunächst nicht nötig.
 
 - Kein Port-Forwarding ins Internet
 - Optional: Firewall-Regel für Zugriff nur vom Hauptrechner
+- `OLLAMA_HOST=0.0.0.0:11434` nur im LAN oder VPN verwenden

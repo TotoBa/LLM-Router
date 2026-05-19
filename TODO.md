@@ -34,3 +34,17 @@ LLM-Router. Sie ersetzt keine Master-Planung und enthaelt keine Secrets.
 - [ ] Config-Beispiele pruefen, ohne echte lokale Configs zu committen.
 - [ ] Keine `.env`, Keys, Tokens oder lokalen Host-spezifischen Secrets
   versionieren.
+
+## Kimi-Arbeitsregeln
+
+- [ ] Vor Arbeitsbeginn `README.md`, diese `TODO.md`, `docs/architecture.md`,
+  `docs/backends.md`, `docs/configuration.md`, `docs/fallback.md`,
+  `docs/security.md` und `plan.md` lesen.
+- [ ] Keine separaten Prompt- oder Handoff-Dateien anlegen. Operative
+  Folgearbeit gehoert in diese `TODO.md`; groessere Konzepte duerfen nur als
+  klar benannte `*.plan.md` abgelegt werden.
+- [ ] Keine Schachproduktlogik in den Router verschieben.
+- [ ] Live-Zugriffe auf Backends nur auf ausdruecklichen Auftrag.
+- [ ] Abschlusspruefung ausfuehren: `pytest -q`, `ruff check .`,
+  `mypy src`, `git status --short`, `git diff --check`. Nicht verfuegbare
+  Tools im Abschluss klar nennen.

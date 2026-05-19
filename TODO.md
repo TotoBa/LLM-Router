@@ -3,6 +3,13 @@
 Diese Datei sammelt operative Folgearbeiten fuer den eigenstaendigen
 LLM-Router. Sie ersetzt keine Master-Planung und enthaelt keine Secrets.
 
+## Ecosystem-Doku
+
+- [x] Gemeinsame Human-/LLM-Referenz aus `CaiLama-Master` in `README.md`
+  verlinkt: `https://cailama.org/reference.html`, `https://cailama.org/llms.txt`,
+  `https://cailama.org/ecosystem-reference.md` und
+  `https://cailama.org/data/ecosystem.json`.
+
 ## Betriebs- und Fallback-Haertung
 
 - [ ] Backend-Zustandsmodell pruefen: Round-Robin, Cooldown,

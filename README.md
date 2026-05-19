@@ -6,6 +6,13 @@
 
 Webseite: <https://cailama.org/>
 
+Ecosystem-Doku:
+
+- Human-Referenz: <https://cailama.org/reference.html>
+- LLM-Einstieg: <https://cailama.org/llms.txt>
+- LLM-Markdown: <https://cailama.org/ecosystem-reference.md>
+- Maschinenlesbar: <https://cailama.org/data/ecosystem.json>
+
 Generic local LLM routing gateway with OpenAI-compatible API, model aliases, backend fallback and JSONL logging.
 
 ## Was macht der Router?

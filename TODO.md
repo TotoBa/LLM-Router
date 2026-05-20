@@ -83,8 +83,12 @@ Arbeite diese Reihenfolge ab und halte den Router strikt als Infrastruktur:
       - `test_json_formatter_outputs_dict_directly`
       - `test_log_backend_state_change_no_sensitive_content`
       - `test_log_request_privacy_defaults`
-4. Smoke-/Config-Pruefung ohne echte Provider-Secrets dokumentieren und
+4. [x] Smoke-/Config-Pruefung ohne echte Provider-Secrets dokumentieren und
    automatisierbar halten.
+    - `check-config` erweitert: prueft referenzierte Env-Vars (`api_key_env`)
+      ohne Live-Anfragen.
+    - Tests: `tests/test_cli.py` – 4 Tests fuer `_check_env_vars`.
+    - Dokumentation: `docs/configuration.md` erweitert.
 
 ## Einheitlicher Kimi-Prompt
 

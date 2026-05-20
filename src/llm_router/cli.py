@@ -34,17 +34,37 @@ def serve(
     uvicorn.run("llm_router.app:app", host=host, port=port, log_level="info")
 
 
+def _check_env_vars(cfg: RouterConfig) -> list[str]:
+    """Check that referenced API key env vars are present in the environment."""
+    missing: list[str] = []
+    for name, backend in cfg.backends.items():
+        if backend.api_key_env and backend.api_key_env not in os.environ:
+            missing.append(
+                f"Backend '{name}' references env var '{backend.api_key_env}' which is not set"
+            )
+    if cfg.server.require_api_key and cfg.server.api_key_env:
+        if cfg.server.api_key_env not in os.environ:
+            missing.append(
+                f"Server requires API key env var '{cfg.server.api_key_env}' which is not set"
+            )
+    return missing
+
+
 @cli.command()
 def check_config(
     config: Path = typer.Option(default=DEFAULT_CONFIG_PATH, help="Path to config YAML"),
 ) -> None:
-    """Validate configuration file."""
+    """Validate configuration file and referenced environment variables."""
     try:
         cfg = _load(config)
         typer.echo("Configuration OK")
         typer.echo(f"Models: {list(cfg.models.keys())}")
         typer.echo(f"Backends: {list(cfg.backends.keys())}")
         typer.echo(f"Policies: {list(cfg.policies.keys())}")
+        env_issues = _check_env_vars(cfg)
+        if env_issues:
+            for issue in env_issues:
+                typer.echo(f"  ⚠ {issue}", err=True)
     except Exception as exc:
         typer.echo(f"Configuration error: {exc}", err=True)
         raise typer.Exit(1)

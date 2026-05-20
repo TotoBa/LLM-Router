@@ -50,8 +50,8 @@ Modelle koennen gezielt auf einzelne Hosts beschraenkt werden. Beispiel: `backen
 ## Installation auf der Router-VM
 
 ```bash
-git clone git@github.com:TotoBa/LLM-Router.git
-cd LLM-Router
+git clone git@github.com:TotoBa/CaiLama-LLM-Router.git
+cd CaiLama-LLM-Router
 python3 -m venv .venv
 .venv/bin/pip install -e .
 cp configs/router.vm-pi.example.yaml configs/router.local.yaml

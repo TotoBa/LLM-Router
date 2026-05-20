@@ -1,6 +1,12 @@
-# Plan: Eigenständiges Repository `TotoBa/LLM-Router`
+# Historischer Plan: CaiLama-LLM-Router initialisieren
 
-Status: Ziel-Repository geprüft: `TotoBa/LLM-Router` existiert, ist aktuell leer, Default-Branch ist `main`, Repository-Größe `0`.
+> Archivhinweis: Diese Datei dokumentiert den Initialplan vor der
+> Umbenennung. Der aktuelle Repository-Name ist
+> `TotoBa/CaiLama-LLM-Router`; alte Bezeichnungen wie `TotoBa/LLM-Router`
+> oder `LLM-Router/` sind in diesem Dokument historische Referenzen.
+
+Status: Der ursprüngliche Ziel-Repository-Check bezog sich auf den alten Namen
+`TotoBa/LLM-Router`.
 
 Der Router soll als **eigenständiges, generisches LLM-Gateway** gebaut werden. Er darf keine fest verdrahteten Schach-Spezialfälle, keine Credentials und keine lokalen IPs im Code enthalten. Kimi-cli, das Schachsystem und später weitere Tools sprechen nur noch diesen Router an. Die konkrete lokale Umgebung wird über nicht eingecheckte Konfigurationsdateien gesteuert.
 

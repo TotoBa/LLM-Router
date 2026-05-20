@@ -1,4 +1,4 @@
-# LLM-Router Dokumentation
+# CaiLama-LLM-Router Dokumentation
 
 Willkommen! Diese Doku richtet sich an alle, die den Router einrichten, konfigurieren oder erweitern wollen.
 
@@ -8,7 +8,7 @@ Willkommen! Diese Doku richtet sich an alle, die den Router einrichten, konfigur
 |---|---|
 | [Architektur](architecture.md) | Wie funktioniert der Router? Wer spricht mit wem? |
 | [Konfiguration](configuration.md) | Wie schreibe ich meine eigene Config? |
-| [Quickstart](../README.md#quickstart) | Schnell zum Laufen bringen |
+| [Schnellinstallation](../README.md#schnellinstallation) | Schnell zum Laufen bringen |
 
 ## Für spezifische Tools
 

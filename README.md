@@ -1,4 +1,4 @@
-# LLM-Router
+# CaiLama-LLM-Router
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/TotoBa/CaiLama/main/img/logo-big.png" alt="CaiLama Logo" width="600">
@@ -13,7 +13,7 @@ Ecosystem-Doku:
 - LLM-Markdown: <https://cailama.org/ecosystem-reference.md>
 - Maschinenlesbar: <https://cailama.org/data/ecosystem.json>
 
-Generic local LLM routing gateway with OpenAI-compatible API, model aliases, backend fallback and JSONL logging.
+Generic local LLM routing gateway for the CaiLama ecosystem with OpenAI-compatible API, model aliases, backend fallback and JSONL logging.
 
 ## Was macht der Router?
 
@@ -22,7 +22,7 @@ Du hast mehrere LLM-Backends (z.B. Ollama lokal, Ollama auf einem RasPi, später
 Der Router schafft eine Abstraktionsschicht:
 
 ```
-Dein Tool -> "chess-small" -> LLM-Router -> Backend "vm" (deepseek-v4-flash:cloud)
+Dein Tool -> "chess-small" -> CaiLama-LLM-Router -> Backend "vm" (deepseek-v4-flash:cloud)
                                 falls down -> Backend "pi" (deepseek-v4-flash:cloud)
 ```
 
@@ -41,8 +41,8 @@ Dein Tool -> "chess-small" -> LLM-Router -> Backend "vm" (deepseek-v4-flash:clou
 ## Schnellinstallation
 
 ```bash
-git clone git@github.com:TotoBa/LLM-Router.git
-cd LLM-Router
+git clone git@github.com:TotoBa/CaiLama-LLM-Router.git
+cd CaiLama-LLM-Router
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"

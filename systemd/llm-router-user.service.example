@@ -1,14 +1,14 @@
 [Unit]
-Description=LLM Router
+Description=CaiLama LLM Router
 After=network-online.target ollama.service
 Wants=network-online.target ollama.service
 
 [Service]
 Type=simple
-WorkingDirectory=/home/DEIN_USER/LLM-Router
-Environment=LLM_ROUTER_CONFIG=/home/DEIN_USER/LLM-Router/configs/router.local.yaml
-EnvironmentFile=-/home/DEIN_USER/LLM-Router/.env
-ExecStart=/home/DEIN_USER/LLM-Router/.venv/bin/llm-router serve --config /home/DEIN_USER/LLM-Router/configs/router.local.yaml --host 0.0.0.0 --port 18080
+WorkingDirectory=/home/DEIN_USER/CaiLama-LLM-Router
+Environment=LLM_ROUTER_CONFIG=/home/DEIN_USER/CaiLama-LLM-Router/configs/router.local.yaml
+EnvironmentFile=-/home/DEIN_USER/CaiLama-LLM-Router/.env
+ExecStart=/home/DEIN_USER/CaiLama-LLM-Router/.venv/bin/llm-router serve --config /home/DEIN_USER/CaiLama-LLM-Router/configs/router.local.yaml --host 0.0.0.0 --port 18080
 Restart=always
 RestartSec=3
 StandardOutput=journal

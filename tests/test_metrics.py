@@ -127,3 +127,29 @@ async def test_metrics_endpoint_resets_on_init(async_client):
     assert data["requests"]["errors"] == 1
     assert data["backend_failures"]["openai"] == 1
     assert data["limit_detections"]["openai"] == 1
+
+
+async def test_metrics_cooldown_counts_only_started_cooldowns(async_client):
+    init_metrics()
+    with respx.mock:
+        respx.post("https://api.openai.com/v1/chat/completions").mock(
+            return_value=Response(429, json={"error": "rate limit"})
+        )
+        first = await async_client.post(
+            "/v1/chat/completions",
+            json={"model": "gpt-4o", "messages": [{"role": "user", "content": "Hi"}]},
+        )
+        first_metrics = (await async_client.get("/metrics")).json()
+        second = await async_client.post(
+            "/v1/chat/completions",
+            json={"model": "gpt-4o", "messages": [{"role": "user", "content": "Hi"}]},
+        )
+
+    assert first.status_code == 429
+    assert second.status_code == 429
+    assert first_metrics["backend_failures"]["openai"] == 1
+    assert "openai" not in first_metrics["cooldowns"]
+
+    final_metrics = (await async_client.get("/metrics")).json()
+    assert final_metrics["backend_failures"]["openai"] == 2
+    assert final_metrics["cooldowns"]["openai"] == 1

@@ -196,9 +196,10 @@ def _record_backend_success(model_alias: str, backend_name: str) -> None:
     _BACKEND_STATE.pop(_state_key(model_alias, backend_name), None)
 
 
-def _record_backend_failure(model_alias: str, backend_name: str, policy: PolicyConfig) -> None:
+def _record_backend_failure(model_alias: str, backend_name: str, policy: PolicyConfig) -> bool:
+    """Record one backend failure and return whether cooldown just started."""
     if policy.max_backend_failures_before_cooldown <= 0:
-        return
+        return False
     state = _backend_state(model_alias, backend_name)
     state.failures += 1
     if state.failures >= policy.max_backend_failures_before_cooldown:
@@ -213,6 +214,8 @@ def _record_backend_failure(model_alias: str, backend_name: str, policy: PolicyC
                 state="cooldown_started",
                 cooldown_seconds=policy.backend_cooldown_seconds,
             )
+        return True
+    return False
 
 
 def _select_backends(model_alias: str, config: RouterConfig) -> list[str]:
@@ -362,9 +365,11 @@ async def chat_completions(
                 proxy_resp = await _send_backend_request(backend, proxied_payload, stream=stream)
                 break
             except (httpx.ConnectError, httpx.ConnectTimeout, httpx.TimeoutException) as exc:
-                _record_backend_failure(model_alias, backend_name, policy)
+                cooldown_started = _record_backend_failure(model_alias, backend_name, policy)
                 metrics = get_metrics()  # type: ignore
                 metrics.record_backend_failure(backend_name)
+                if cooldown_started:
+                    metrics.record_cooldown(backend_name)
                 is_last_backend = backend_index == len(backends) - 1
                 duration_ms = (time.monotonic() - request_started) * 1000
                 logger = _get_logger()
@@ -460,8 +465,9 @@ async def chat_completions(
         limit_detected = looks_like_limit_error(proxy_resp.status_code, resp_body, config)
         fallbackable = should_fallback(proxy_resp.status_code, resp_body, False, policy, config)
         if fallbackable:
-            _record_backend_failure(model_alias, backend_name, policy)
-            get_metrics().record_cooldown(backend_name)
+            cooldown_started = _record_backend_failure(model_alias, backend_name, policy)
+            if cooldown_started:
+                get_metrics().record_cooldown(backend_name)
             get_metrics().record_backend_failure(backend_name)
         logger = _get_logger()
         if logger:

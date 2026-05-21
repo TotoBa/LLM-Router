@@ -21,6 +21,9 @@ Vor Arbeitsbeginn lesen:
 
 ## Naechster Arbeitsschritt
 
+- [x] Observability fuer Cooldowns schaerfen: `cooldowns` in `/metrics` zaehlt
+  nur noch tatsaechlich gestartete Backend-Cooldown-Transitionen. Einzelne
+  Backend-Fehler bleiben separat unter `backend_failures` sichtbar.
 - [x] Streaming-Fehlerbehandlung klaeren und implementieren: `500`-Antworten
   innerhalb eines `stream: true`-Flows werden transparent durchgereicht, aber
   Clients erkennen den Router-Header `x-llm-router-returned-last-error` nicht im

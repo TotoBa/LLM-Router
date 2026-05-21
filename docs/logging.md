@@ -58,3 +58,10 @@ jq 'select(.status_code >= 400)' logs/llm-router.jsonl
 # Fallback-Statistik
 jq 'select(.fallback_used == true)' logs/llm-router.jsonl | wc -l
 ```
+
+## Metriken
+
+`/metrics` liefert aggregierte, inhaltsfreie Betriebsdaten. `cooldowns` zaehlt
+nur tatsaechlich gestartete Backend-Cooldowns, nicht jeden einzelnen
+fallbackfaehigen Fehler. Einzelne Backend-Fehler bleiben separat unter
+`backend_failures` sichtbar.

@@ -21,11 +21,20 @@ Vor Arbeitsbeginn lesen:
 
 ## Naechster Arbeitsschritt
 
-Aktueller Stand 2026-05-21: Fuer den Router ist nach dem aktuellen Nutzerstand
-keine neue Folgearbeit aktiv. Agenten sollen in diesem Repository keine neuen
-Router-Aufgaben beginnen, solange der Nutzer nicht ausdruecklich wieder Router-
-Arbeit beauftragt. Offene Ecosystem-Energie liegt vorerst bei
-`TotoBa/CaiLama-Search`.
+Aktueller Stand 2026-05-22: Fuer den Router ist der bisherige Aufgabenplan abgearbeitet.
+Eine neue Infrastruktur-Welle wird fuer Betriebsrobustheit und Transparenz
+aufgenommen:
+
+- [ ] Backend-API-Key-Weitergabe aktivieren und testen: `api_key_env` muss
+  ueber `resolve_api_key()` in den `Authorization`-Header fuer Backend-Requests
+  fliessen, ohne Secrets zu loggen. Betroffene Dateien:
+  `src/llm_router/openai_compat.py`, `src/llm_router/config.py`.
+- [ ] Privacy-safe Token-/Usage-Metriken ergaenzen: OpenAI-kompatibles `usage`
+  aus Antworten aggregieren, `/metrics` JSON und Prometheus-Text erweitern.
+  Keine Prompt- oder Response-Inhalte speichern.
+- [ ] Optionalen `llm-router usage` Diagnosebefehl ergaenzen:
+  `llm-router usage --metrics-url URL` zeigt Requests, Fallbacks, Latenz,
+  Alias-/Backend-Verteilung und Token-Gesamtwerte lesbar an.
 
 - [x] Observability fuer Cooldowns schaerfen: `cooldowns` in `/metrics` zaehlt
   nur noch tatsaechlich gestartete Backend-Cooldown-Transitionen. Einzelne

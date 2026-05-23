@@ -83,13 +83,18 @@ backends:
 ```yaml
 models:
   chess-small:
-    provider_model: "deepseek-v4-flash:cloud"
+    provider_model: "gemma4:31b-cloud"
     backends: ["local", "pi"]
-    policy: "standard"
+    policy: "long_running"
     routing_strategy: "round_robin"
 
   chess-large:
-    provider_model: "gemma4:31b-cloud"
+    provider_model: "kimi-k2.6:cloud"
+    backends: ["local", "pi"]
+    policy: "long_running"
+
+  chess-task:
+    provider_model: "kimi-k2.6:cloud"
     backends: ["local", "pi"]
     policy: "long_running"
 
@@ -103,7 +108,7 @@ models:
 ```
 
 - **Logisches Modell** (`chess-small`) ist das, was der Client anfragt
-- **Provider-Modell** (`deepseek-v4-flash:cloud`) ist das, was das Backend versteht
+- **Provider-Modell** (`gemma4:31b-cloud`) ist das, was das Backend versteht
 - **Backends**: Reihenfolge ist Fallback-Reihenfolge. Fehlt sie, werden alle `enabled` Backends nach `priority` sortiert.
 - Provider-Modelle muessen auf jedem Backend verfuegbar sein, das in `backends` genannt ist
 - `backend_models` ueberschreibt den Provider-Modellnamen je Backend. Das ist

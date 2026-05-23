@@ -165,7 +165,6 @@ Auf jedem Ollama-Host dieselben Provider-Modelle bereitstellen, die in `models.*
 ```bash
 for model in \
   kimi-k2.6:cloud \
-  deepseek-v4-pro:cloud \
   deepseek-v4-flash:cloud \
   gemma4:31b-cloud \
   qwen3.5:397b-cloud \

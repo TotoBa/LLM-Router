@@ -22,8 +22,8 @@ Du hast mehrere LLM-Backends (z.B. Ollama lokal, Ollama auf einem RasPi, später
 Der Router schafft eine Abstraktionsschicht:
 
 ```
-Dein Tool -> "chess-small" -> CaiLama-LLM-Router -> Backend "vm" (deepseek-v4-flash:cloud)
-                                falls down -> Backend "pi" (deepseek-v4-flash:cloud)
+Dein Tool -> "chess-small" -> CaiLama-LLM-Router -> Backend "vm" (gemma4:31b-cloud)
+                                falls down -> Backend "pi" (gemma4:31b-cloud)
 ```
 
 ## Features
@@ -180,9 +180,9 @@ models:
     policy: "standard"
 
   chess-small:
-    provider_model: "deepseek-v4-flash:cloud"
+    provider_model: "gemma4:31b-cloud"
     backends: ["local", "pi"]
-    policy: "standard"
+    policy: "long_running"
     routing_strategy: "round_robin"
 
 policies:

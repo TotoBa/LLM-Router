@@ -48,14 +48,14 @@ Der LLM-Router ist ein **generisches, lokales LLM-Gateway** mit einer OpenAI-kom
    ├─ model "chess-small" empfangen
    ├─ Client "chess-system" erkannt
 2. Routing
-   ├─ "chess-small" → provider_model: "deepseek-v4-flash:cloud"
+   ├─ "chess-small" → provider_model: "gemma4:31b-cloud"
    ├─ Backends: [vm, pi]
    ├─ routing_strategy "priority" oder "round_robin"
 3. Backend-Call #1 (vm)
-   ├─ Request an lokales VM-Ollama mit model "deepseek-v4-flash:cloud"
+   ├─ Request an lokales VM-Ollama mit model "gemma4:31b-cloud"
    ├─ 429 zurück → Limit erkannt
 4. Fallback → Backend-Call #2 (pi)
-   ├─ Request an Pi-Ollama mit model "deepseek-v4-flash:cloud"
+   ├─ Request an Pi-Ollama mit model "gemma4:31b-cloud"
    ├─ 200 OK
 5. Antwort + Header
    ├─ Original-Response zurück

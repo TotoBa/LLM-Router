@@ -72,6 +72,11 @@ aufgenommen:
   Wenn noetig, zusaetzliches `text/plain`-Format bereitstellen.
 - [x] `mypy src` bereinigen: bekannte Typfehler bei RootModel-Typen,
   YAML-Stubs und RouterError-Argumentreihenfolge beheben.
+- [x] Beispiel-Aliase und Docker-Beispiel auf aktuellen Teststand bringen:
+  `chess-small` nutzt `gemma4:31b-cloud`; `chess-large`, `chess-task`,
+  `chess-critic` und `chess-researcher` nutzen `kimi-k2.6:cloud`.
+  `deepseek-v4-pro:cloud` ist aus den aktiven Beispielkonfigurationen und
+  Config-Tests entfernt. `docker/Dockerfile` baut aus dem Repo-Root-Kontext.
 
 ## Verifizierter Stand
 
@@ -81,11 +86,13 @@ aufgenommen:
 
 ## Kimi-Handoff
 
-Stand 2026-05-23: Alle Punkte unter "Naechster Arbeitsschritt" sind umgesetzt
-und verifiziert. Keine direkte Router-Folgearbeit beginnen, bis ein Live-Smoke,
-ein neuer Benchmark-Bedarf oder ein neues Backend-/Alias-Profil beauftragt
-wird. Keine echten Backends oder Live-Runtime-Services ohne ausdruecklichen
-Nutzerauftrag verwenden.
+Stand 2026-05-23: Alle Punkte unter "Naechster Arbeitsschritt" sind umgesetzt.
+Zusatzstand: Chess-Aliase sind fuer die naechste Testphase auf Gemma/Kimi
+umgestellt, `deepseek-v4-pro:cloud` ist aus Beispielconfigs und Tests entfernt,
+und das Docker-Beispiel baut wieder aus dem Repo-Root-Kontext. Keine direkte
+Router-Folgearbeit beginnen, bis ein Live-Smoke, ein neuer Benchmark-Bedarf
+oder ein neues Backend-/Alias-Profil beauftragt wird. Keine echten Backends
+oder Live-Runtime-Services ohne ausdruecklichen Nutzerauftrag verwenden.
 
 Arbeite die Punkte unter "Naechster Arbeitsschritt" von oben nach unten ab.
 Der Router bleibt Infrastruktur: keine Schachproduktlogik, keine RAG-Logik,

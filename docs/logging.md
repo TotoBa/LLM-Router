@@ -11,7 +11,7 @@ Wenn `logging.jsonl_path` gesetzt ist, erzeugt jeder Backend-Versuch einen JSONL
   "client": "chess-system",
   "path": "/v1/chat/completions",
   "request_model": "chess-large",
-  "provider_model": "gemma4:31b-cloud",
+  "provider_model": "kimi-k2.6:cloud",
   "backend": "vm",
   "status_code": 429,
   "limit_detected": true,

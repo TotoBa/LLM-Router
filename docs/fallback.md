@@ -75,11 +75,11 @@ Anfrage -> Backend vm -> Connection Error
 
 ```json
 {"timestamp":1778962130.123,"request_id":"01HY...","client":"chess-system",
- "request_model":"chess-large","provider_model":"gemma4:31b-cloud","backend":"vm",
+ "request_model":"chess-large","provider_model":"kimi-k2.6:cloud","backend":"vm",
  "status_code":429,"limit_detected":true,"fallback_used":false,"duration_ms":823}
 
 {"timestamp":1778962131.456,"request_id":"01HY...","client":"chess-system",
- "request_model":"chess-large","provider_model":"gemma4:31b-cloud","backend":"pi",
+ "request_model":"chess-large","provider_model":"kimi-k2.6:cloud","backend":"pi",
  "status_code":200,"limit_detected":false,"fallback_used":true,"duration_ms":5720}
 ```
 

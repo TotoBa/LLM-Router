@@ -474,15 +474,15 @@ def test_chess_alias_examples_include_dedicated_roles():
     repo_root = Path(__file__).resolve().parents[1]
     expected_models = {
         "chess-router": "deepseek-v4-flash:cloud",
-        "chess-small": "deepseek-v4-flash:cloud",
-        "chess-large": "gemma4:31b-cloud",
-        "chess-task": "deepseek-v4-pro:cloud",
+        "chess-small": "gemma4:31b-cloud",
+        "chess-large": "kimi-k2.6:cloud",
+        "chess-task": "kimi-k2.6:cloud",
         "chess-coach": "gemma4:31b-cloud",
         "chess-analyst": "qwen3.5:397b-cloud",
-        "chess-critic": "deepseek-v4-pro:cloud",
+        "chess-critic": "kimi-k2.6:cloud",
         "chess-vision": "gemma4:31b-cloud",
         "chess-scribe": "deepseek-v4-flash:cloud",
-        "chess-researcher": "deepseek-v4-pro:cloud",
+        "chess-researcher": "kimi-k2.6:cloud",
     }
 
     for config_name in (

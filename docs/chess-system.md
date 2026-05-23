@@ -35,15 +35,15 @@ LLM_MODEL_RESEARCHER=chess-researcher
 | Rolle | Modell-Alias | Provider-Modell | Zweck |
 |---|---|---|---|
 | router | `chess-router` | `deepseek-v4-flash:cloud` | Aufgabenklasse, Analyseweg |
-| small | `chess-small` | `deepseek-v4-flash:cloud` | Klassifikation, Zugbewertung |
-| large | `chess-large` | `gemma4:31b-cloud` | Lange Analyse, Kommentierung |
-| task | `chess-task` | `deepseek-v4-pro:cloud` | PGN-Kommentare, Zusammenfassungen |
+| small | `chess-small` | `gemma4:31b-cloud` | Klassifikation, Zugbewertung |
+| large | `chess-large` | `kimi-k2.6:cloud` | Lange Analyse, Kommentierung |
+| task | `chess-task` | `kimi-k2.6:cloud` | PGN-Kommentare, Zusammenfassungen |
 | coach | `chess-coach` | `gemma4:31b-cloud` | Didaktischer Trainingscoach, deutsch, spoilerarm, Nutzerstaerke beachten |
 | analyst | `chess-analyst` | `qwen3.5:397b-cloud` | Tiefe Analyse aus Engine-, Maia-, Board-Truth-, PGN- und Trainingskontext |
-| critic | `chess-critic` | `deepseek-v4-pro:cloud` | Widersprueche, unbelegte Aussagen und riskante Tool-/Analyseausgaben pruefen |
+| critic | `chess-critic` | `kimi-k2.6:cloud` | Widersprueche, unbelegte Aussagen und riskante Tool-/Analyseausgaben pruefen |
 | vision | `chess-vision` | `gemma4:31b-cloud` | OCR-, Bild- und Diagrammkontext; vorsichtig, keine geratenen FENs |
 | scribe | `chess-scribe` | `deepseek-v4-flash:cloud` | Strukturierte deutsche Berichte, PGN-Kommentare, Lernkarten und Konsolentexte |
-| researcher | `chess-researcher` | `deepseek-v4-pro:cloud` | Vorhandene Quellen-, Such- und Knowledge-Kontexte mit Attribution verdichten |
+| researcher | `chess-researcher` | `kimi-k2.6:cloud` | Vorhandene Quellen-, Such- und Knowledge-Kontexte mit Attribution verdichten |
 
 Diese Zuordnung lebt **nur im Router** – das Schachsystem fragt einfach `chess-small` und bekommt eine Antwort.
 
@@ -52,15 +52,15 @@ Diese Zuordnung lebt **nur im Router** – das Schachsystem fragt einfach `chess
 | Alias | Empfohlene Policy | Begründung |
 |---|---|---|
 | `chess-router` | `standard` | Schnelle Klassifikation, max. 300s |
-| `chess-small` | `standard` | Schnelle Zugbewertung, max. 300s |
+| `chess-small` | `long_running` | Zugbewertung und Klassifikation mit gemma4:31b-cloud, max. 900s |
 | `chess-large` | `long_running` | Lange Analyse, max. 900s |
-| `chess-task` | `standard` | PGN-Kommentare, max. 300s |
+| `chess-task` | `long_running` | PGN-Kommentare und Zusammenfassungen mit kimi-k2.6, max. 900s |
 | `chess-coach` | `long_running` | Didaktische Ausführung, max. 900s |
 | `chess-analyst` | `long_running` | Umfangreiche Analyse, max. 900s |
-| `chess-critic` | `standard` | Prüfung auf Konsistenz, max. 300s |
+| `chess-critic` | `long_running` | Prüfung auf Konsistenz mit kimi-k2.6, max. 900s |
 | `chess-vision` | `long_running` | OCR-/Diagramm-Analyse, max. 900s |
 | `chess-scribe` | `standard` | Berichtserstellung, max. 300s |
-| `chess-researcher` | `standard` | Recherche-Verdichtung, max. 300s |
+| `chess-researcher` | `long_running` | Recherche-Verdichtung mit kimi-k2.6, max. 900s |
 
 **Kimi-CLI** verwendet `kimi-cli-default` mit `policy: interactive`
 (max. 300s, `fallback_on_5xx: true`), da es als interaktiver Client
@@ -76,19 +76,19 @@ models:
     policy: "standard"
 
   chess-small:
-    provider_model: "deepseek-v4-flash:cloud"
-    backends: ["vm", "pi"]
-    policy: "standard"
-
-  chess-large:
     provider_model: "gemma4:31b-cloud"
     backends: ["vm", "pi"]
     policy: "long_running"
 
-  chess-task:
-    provider_model: "deepseek-v4-pro:cloud"
+  chess-large:
+    provider_model: "kimi-k2.6:cloud"
     backends: ["vm", "pi"]
-    policy: "standard"
+    policy: "long_running"
+
+  chess-task:
+    provider_model: "kimi-k2.6:cloud"
+    backends: ["vm", "pi"]
+    policy: "long_running"
 
   chess-coach:
     provider_model: "gemma4:31b-cloud"
@@ -101,9 +101,9 @@ models:
     policy: "long_running"
 
   chess-critic:
-    provider_model: "deepseek-v4-pro:cloud"
+    provider_model: "kimi-k2.6:cloud"
     backends: ["vm", "pi"]
-    policy: "standard"
+    policy: "long_running"
 
   chess-vision:
     provider_model: "gemma4:31b-cloud"
@@ -116,9 +116,9 @@ models:
     policy: "standard"
 
   chess-researcher:
-    provider_model: "deepseek-v4-pro:cloud"
+    provider_model: "kimi-k2.6:cloud"
     backends: ["vm", "pi"]
-    policy: "standard"
+    policy: "long_running"
 ```
 
 ## Test

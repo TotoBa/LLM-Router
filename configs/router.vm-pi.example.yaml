@@ -42,21 +42,21 @@ models:
     routing_strategy: "round_robin"
 
   chess-small:
-    provider_model: "deepseek-v4-flash:cloud"
-    backends: ["vm", "pi"]
-    policy: "standard"
-    routing_strategy: "round_robin"
-
-  chess-large:
     provider_model: "gemma4:31b-cloud"
     backends: ["vm", "pi"]
     policy: "long_running"
     routing_strategy: "round_robin"
 
-  chess-task:
-    provider_model: "deepseek-v4-pro:cloud"
+  chess-large:
+    provider_model: "kimi-k2.6:cloud"
     backends: ["vm", "pi"]
-    policy: "standard"
+    policy: "long_running"
+    routing_strategy: "round_robin"
+
+  chess-task:
+    provider_model: "kimi-k2.6:cloud"
+    backends: ["vm", "pi"]
+    policy: "long_running"
     routing_strategy: "round_robin"
 
   chess-coach:
@@ -72,9 +72,9 @@ models:
     routing_strategy: "round_robin"
 
   chess-critic:
-    provider_model: "deepseek-v4-pro:cloud"
+    provider_model: "kimi-k2.6:cloud"
     backends: ["vm", "pi"]
-    policy: "standard"
+    policy: "long_running"
     routing_strategy: "round_robin"
 
   chess-vision:
@@ -90,19 +90,13 @@ models:
     routing_strategy: "round_robin"
 
   chess-researcher:
-    provider_model: "deepseek-v4-pro:cloud"
+    provider_model: "kimi-k2.6:cloud"
     backends: ["vm", "pi"]
-    policy: "standard"
+    policy: "long_running"
     routing_strategy: "round_robin"
 
   kimi-k2.6:cloud:
     provider_model: "kimi-k2.6:cloud"
-    backends: ["vm", "pi"]
-    policy: "standard"
-    routing_strategy: "round_robin"
-
-  deepseek-v4-pro:cloud:
-    provider_model: "deepseek-v4-pro:cloud"
     backends: ["vm", "pi"]
     policy: "standard"
     routing_strategy: "round_robin"

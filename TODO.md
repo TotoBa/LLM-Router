@@ -81,10 +81,11 @@ aufgenommen:
 
 ## Kimi-Handoff
 
-Stand 2026-05-23: Beginne mit privacy-safe Token-/Usage-Metriken, danach
-`llm-router usage`, dann Benchmark-Export fuer den Master und zuletzt die
-generische Vorbereitung spezialisierter Modellbackends. Keine echten Backends
-oder Live-Runtime-Services ohne ausdruecklichen Nutzerauftrag verwenden.
+Stand 2026-05-23: Alle Punkte unter "Naechster Arbeitsschritt" sind umgesetzt
+und verifiziert. Keine direkte Router-Folgearbeit beginnen, bis ein Live-Smoke,
+ein neuer Benchmark-Bedarf oder ein neues Backend-/Alias-Profil beauftragt
+wird. Keine echten Backends oder Live-Runtime-Services ohne ausdruecklichen
+Nutzerauftrag verwenden.
 
 Arbeite die Punkte unter "Naechster Arbeitsschritt" von oben nach unten ab.
 Der Router bleibt Infrastruktur: keine Schachproduktlogik, keine RAG-Logik,

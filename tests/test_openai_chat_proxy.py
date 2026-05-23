@@ -637,3 +637,109 @@ async def test_chat_completions_passthrough_unknown_model(mock_passthrough_clien
         assert response.headers["x-llm-router-backend"] == "openai"
         assert response.headers.get("x-llm-router-fallback-used") == "false"
         assert route.called
+
+
+# ── Tests for backend endpoint_path ──────────────────────────────────────────
+
+@pytest.fixture
+def mock_config_endpoint_path(tmp_path):
+    config_content = """
+server:
+  host: "127.0.0.1"
+  port: 18080
+
+runtime:
+  request_timeout_seconds: 600
+  connect_timeout_seconds: 10
+
+backends:
+  image-gen:
+    type: openai_compatible
+    base_url: https://api.stability.ai
+    api_key_env: STABILITY_API_KEY
+    priority: 10
+    endpoint_path: "/v1/images/generations"
+
+models:
+  image-model:
+    provider_model: image-model-id
+    backends:
+      - image-gen
+    policy: standard
+
+policies:
+  standard:
+    max_attempts_per_backend: 1
+    retry_on_connection_error: true
+    retry_on_timeout: false
+    fallback_on_limit: true
+    fallback_on_5xx: false
+    fallback_on_4xx: false
+    fallback_on_model_not_found: false
+    timeout_seconds: 300
+
+limit_detection:
+  status_codes: [429]
+  body_markers: []
+
+logging:
+  level: INFO
+"""
+    path = tmp_path / "endpoint_path_router.yaml"
+    path.write_text(config_content)
+    return path
+
+
+@pytest.fixture
+def mock_endpoint_path_app(mock_config_endpoint_path):
+    from llm_router.config import load_config
+    from llm_router.app import create_app
+    return create_app(config=load_config(mock_config_endpoint_path))
+
+
+@pytest.fixture
+async def mock_endpoint_path_client(mock_endpoint_path_app):
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=mock_endpoint_path_app),
+        base_url="http://test",
+    ) as client:
+        yield client
+
+
+async def test_backend_endpoint_path_is_used(mock_endpoint_path_client):
+    """A backend with endpoint_path sends the request to the configured path."""
+    with respx.mock:
+        route = respx.post("https://api.stability.ai/v1/images/generations").mock(
+            return_value=Response(200, json={
+                "id": "img-test",
+                "object": "image.generation",
+                "data": [{"url": "https://example.com/img.png"}]
+            })
+        )
+        response = await mock_endpoint_path_client.post(
+            "/v1/chat/completions",
+            json={"model": "image-model", "messages": [{"role": "user", "content": "Draw a cat"}]},
+        )
+        assert response.status_code == 200
+        assert response.json()["id"] == "img-test"
+        assert route.called
+
+
+async def test_chat_completions_default_endpoint_path(mock_client):
+    """Default backend still uses /chat/completions when endpoint_path is omitted."""
+    with respx.mock:
+        route = respx.post("https://api.openai.com/v1/chat/completions").mock(
+            return_value=Response(200, json={
+                "id": "chatcmpl-test",
+                "object": "chat.completion",
+                "model": "gpt-4o",
+                "choices": [{"message": {"role": "assistant", "content": "Hello!"}}]
+            })
+        )
+        response = await mock_client.post(
+            "/v1/chat/completions",
+            json={"model": "gpt-4o", "messages": [{"role": "user", "content": "Hi"}]},
+        )
+        assert response.status_code == 200
+        assert response.json()["model"] == "gpt-4o"
+        assert route.called

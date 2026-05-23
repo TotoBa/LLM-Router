@@ -44,10 +44,13 @@ aufgenommen:
   Keine Prompts, Responses, Provider-Keys oder lokalen Runtime-Pfade.
   Implementiert als `llm-router benchmark-export --metrics-url URL --git-ref REF`
   mit Auto-Detection des Git-Refs via `git rev-parse HEAD`.
-- [ ] Spaetere spezialisierte Modellbackends als generischen Router-Fall
+- [x] Spaetere spezialisierte Modellbackends als generischen Router-Fall
   vorbereiten: spezialisierte Modelle duerfen nur als Backend-/Alias-
   Konfiguration erscheinen, muessen gegen dieselben Benchmarks antreten und
   duerfen keine Schachproduktlogik in den Router ziehen.
+  `endpoint_path` in `BackendConfig` ermoeglicht beliebige Backend-Endpoints
+  (z.B. Bildgenerierung / Embeddings) als reine YAML-Konfiguration, ohne
+  dass der Router produktspezifische Logik anfaesst.
 
 - [x] Observability fuer Cooldowns schaerfen: `cooldowns` in `/metrics` zaehlt
   nur noch tatsaechlich gestartete Backend-Cooldown-Transitionen. Einzelne

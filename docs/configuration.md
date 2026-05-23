@@ -59,17 +59,21 @@ backends:
   local:
     type: "openai_compatible"
     base_url: "http://127.0.0.1:11434/v1"
+    endpoint_path: "/chat/completions"   # Default, kann weggelassen werden
     priority: 10        # Niedriegere Zahl = höhere Priorität
     enabled: true
 
-  pi:
+  image-gen:
     type: "openai_compatible"
-    base_url: "http://pi-ollama.example.local:11434/v1"
+    base_url: "https://api.example-provider.com"
+    endpoint_path: "/v1/images/generations"
     priority: 20
     enabled: true
 ```
 
 - `base_url` zeigt auf die OpenAI-kompatible API, bei Ollama also mit `/v1`
+- `endpoint_path` ist optional; Standard ist `/chat/completions`. Spezialisierte
+  Backends (Bildgenerierung, Embeddings) koennen hier abweichende Pfade setzen.
 - `api_key_env` ist optional; falls gesetzt, enthält es den Namen der Env-Variablen, nicht den Key selbst
 - `priority` sortiert: niedrigere Zahl = höhere Priorität
 - `enabled: false` deaktiviert das Backend komplett

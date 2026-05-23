@@ -16,6 +16,7 @@ class BackendConfig(BaseModel):
     type: str = "openai_compatible"
     base_url: str
     api_key_env: str | None = None
+    endpoint_path: str = "/chat/completions"
     priority: int = 100
     enabled: bool = True
 

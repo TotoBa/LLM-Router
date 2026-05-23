@@ -80,6 +80,35 @@ llm-router test-backends --config configs/router.local.yaml
 
 Dies ruft pro Backend `GET <base_url>/models` auf. Bei einer Ollama-Config mit `base_url: http://OLLAMA_PI_IP:11434/v1` ist das also `GET /v1/models`.
 
+## Endpoint-Pfad pro Backend
+
+Standardmaessig sendet der Router an `POST /chat/completions` – der OpenAI-
+Standard. Spezialisierte Backends (z.B. Bildgenerierung, Embeddings) koennen
+ueber `endpoint_path` einen anderen Pfad erhalten. Der Alias und die Client-
+Anfrage bleiben unveraendert OpenAI-kompatibel; nur der Backend-Endpoint
+passt sich an.
+
+```yaml
+backends:
+  image-gen:
+    type: "openai_compatible"
+    base_url: "https://api.example-provider.com"
+    api_key_env: "IMAGE_API_KEY"
+    priority: 10
+    endpoint_path: "/v1/images/generations"
+
+models:
+  image-model:
+    provider_model: "dall-e-3"
+    backends: ["image-gen"]
+    policy: "standard"
+```
+
+Ohne `endpoint_path` wird `/chat/completions` verwendet. Der Router
+vermeidet jede produktspezifische Logik – Prompt-Aufbereitung, Parameter-
+Mapping und Antwort-Transformation bleiben dem Backend und dem aufrufenden
+Client ueberlassen.
+
 ## Verteilung ueber mehrere Backends
 
 Backends koennen priorisiert oder verteilt genutzt werden:

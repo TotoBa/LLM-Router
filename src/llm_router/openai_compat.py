@@ -268,7 +268,7 @@ async def _send_backend_request(
 
     request = _HTTP_CLIENT.build_request(
         "POST",
-        f"{backend.base_url.rstrip('/')}/chat/completions",
+        f"{backend.base_url.rstrip('/')}{backend.endpoint_path}",
         json=proxied_payload,
         headers=_build_headers(backend, resolve_api_key(backend)),
     )

@@ -86,7 +86,7 @@ aufgenommen:
 
 ## Verifizierter Stand
 
-- `uv run --extra dev pytest -q`: 58 Tests passed.
+- `uv run --extra dev pytest -q`: 69 Tests passed.
 - `uv run --extra dev mypy src`: no issues found.
 - `uv run --extra dev ruff check .`: All checks passed.
 

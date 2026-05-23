@@ -192,6 +192,49 @@ async def test_chat_completions_forwarding(mock_client):
         assert route.called
 
 
+async def test_backend_api_key_env_is_forwarded(mock_client, monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "test-backend-key")
+    with respx.mock:
+        route = respx.post("https://api.openai.com/v1/chat/completions").mock(
+            return_value=Response(200, json={
+                "id": "chatcmpl-test",
+                "object": "chat.completion",
+                "model": "gpt-4o",
+                "choices": [{"message": {"role": "assistant", "content": "Hello!"}}],
+            })
+        )
+
+        response = await mock_client.post(
+            "/v1/chat/completions",
+            json={"model": "gpt-4o", "messages": [{"role": "user", "content": "Hi"}]},
+        )
+
+        assert response.status_code == 200
+        assert route.calls[0].request.headers["authorization"] == "Bearer test-backend-key"
+        assert "test-backend-key" not in response.text
+
+
+async def test_missing_backend_api_key_env_does_not_add_authorization(mock_client, monkeypatch):
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    with respx.mock:
+        route = respx.post("https://api.openai.com/v1/chat/completions").mock(
+            return_value=Response(200, json={
+                "id": "chatcmpl-test",
+                "object": "chat.completion",
+                "model": "gpt-4o",
+                "choices": [{"message": {"role": "assistant", "content": "Hello!"}}],
+            })
+        )
+
+        response = await mock_client.post(
+            "/v1/chat/completions",
+            json={"model": "gpt-4o", "messages": [{"role": "user", "content": "Hi"}]},
+        )
+
+        assert response.status_code == 200
+        assert "authorization" not in route.calls[0].request.headers
+
+
 async def test_chat_completions_fallback_on_429(mock_client):
     with respx.mock:
         openai_route = respx.post("https://api.openai.com/v1/chat/completions").mock(

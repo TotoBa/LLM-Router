@@ -25,16 +25,26 @@ Aktueller Stand 2026-05-22: Fuer den Router ist der bisherige Aufgabenplan abgea
 Eine neue Infrastruktur-Welle wird fuer Betriebsrobustheit und Transparenz
 aufgenommen:
 
-- [ ] Backend-API-Key-Weitergabe aktivieren und testen: `api_key_env` muss
+- [x] Backend-API-Key-Weitergabe aktivieren und testen: `api_key_env` muss
   ueber `resolve_api_key()` in den `Authorization`-Header fuer Backend-Requests
   fliessen, ohne Secrets zu loggen. Betroffene Dateien:
   `src/llm_router/openai_compat.py`, `src/llm_router/config.py`.
+  Tests decken vorhandene und fehlende Env-Variable ab; Test-Key erscheint
+  nicht in der Router-Antwort.
 - [ ] Privacy-safe Token-/Usage-Metriken ergaenzen: OpenAI-kompatibles `usage`
   aus Antworten aggregieren, `/metrics` JSON und Prometheus-Text erweitern.
   Keine Prompt- oder Response-Inhalte speichern.
 - [ ] Optionalen `llm-router usage` Diagnosebefehl ergaenzen:
   `llm-router usage --metrics-url URL` zeigt Requests, Fallbacks, Latenz,
   Alias-/Backend-Verteilung und Token-Gesamtwerte lesbar an.
+- [ ] Benchmark-Export fuer den Master vorbereiten: eine secretfreie
+  Zusammenfassung aus `/metrics` oder CLI liefern, die Git-Ref, Alias,
+  Backend, Latenz, Fehler-/Fallback-Rate, Cooldowns und Usage-Werte ausweist.
+  Keine Prompts, Responses, Provider-Keys oder lokalen Runtime-Pfade.
+- [ ] Spaetere spezialisierte Modellbackends als generischen Router-Fall
+  vorbereiten: spezialisierte Modelle duerfen nur als Backend-/Alias-
+  Konfiguration erscheinen, muessen gegen dieselben Benchmarks antreten und
+  duerfen keine Schachproduktlogik in den Router ziehen.
 
 - [x] Observability fuer Cooldowns schaerfen: `cooldowns` in `/metrics` zaehlt
   nur noch tatsaechlich gestartete Backend-Cooldown-Transitionen. Einzelne
@@ -59,11 +69,16 @@ aufgenommen:
 
 ## Verifizierter Stand
 
-- `uv run --extra dev pytest -q`: 55 Tests passed.
+- `uv run --extra dev pytest -q`: 58 Tests passed.
 - `uv run --extra dev mypy src`: no issues found.
 - `uv run --extra dev ruff check .`: All checks passed.
 
 ## Kimi-Handoff
+
+Stand 2026-05-23: Beginne mit privacy-safe Token-/Usage-Metriken, danach
+`llm-router usage`, dann Benchmark-Export fuer den Master und zuletzt die
+generische Vorbereitung spezialisierter Modellbackends. Keine echten Backends
+oder Live-Runtime-Services ohne ausdruecklichen Nutzerauftrag verwenden.
 
 Arbeite die Punkte unter "Naechster Arbeitsschritt" von oben nach unten ab.
 Der Router bleibt Infrastruktur: keine Schachproduktlogik, keine RAG-Logik,

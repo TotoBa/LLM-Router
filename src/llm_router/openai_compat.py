@@ -12,6 +12,7 @@ from fastapi import APIRouter, Header, Query, Request
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 
 from llm_router.backends import backend_order, resolve_backend_model
+from llm_router.config import resolve_api_key
 from llm_router.errors import RouterError, error_response
 from llm_router.fallback import looks_like_limit_error, should_fallback
 from llm_router.logging_jsonl import log_backend_state_change, log_request
@@ -269,7 +270,7 @@ async def _send_backend_request(
         "POST",
         f"{backend.base_url.rstrip('/')}/chat/completions",
         json=proxied_payload,
-        headers=_build_headers(backend, None),
+        headers=_build_headers(backend, resolve_api_key(backend)),
     )
     return await _HTTP_CLIENT.send(request, stream=stream)
 

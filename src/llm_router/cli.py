@@ -4,6 +4,7 @@ import asyncio
 import json
 import os
 from pathlib import Path
+from typing import Any
 
 import httpx
 import typer
@@ -137,6 +138,84 @@ def smoke_test(
 
 def main() -> None:
     cli()
+
+
+# ── Usage formatting (separate from CLI for testability) ──
+
+def _format_usage(data: dict[str, Any]) -> str:
+    """Pretty-print aggregated router usage/diagnostics."""
+    requests = data.get("requests", {})
+    usage = data.get("usage", {})
+    lines: list[str] = [
+        f"Requests  total:    {requests.get('total', 0)}",
+        f"  success:          {requests.get('success', 0)}",
+        f"  errors:           {requests.get('errors', 0)}",
+        f"  fallbacks:        {requests.get('fallbacks', 0)}",
+        f"  avg latency:      {requests.get('average_latency_ms', 0)} ms",
+        "",
+        "Usage tokens",
+        f"  prompt:           {usage.get('prompt_tokens', 0)}",
+        f"  completion:       {usage.get('completion_tokens', 0)}",
+        f"  total:            {usage.get('total_tokens', 0)}",
+    ]
+
+    aliases = data.get("aliases", {})
+    if aliases:
+        lines.append("")
+        lines.append("Alias distribution")
+        for alias, count in sorted(aliases.items()):
+            lines.append(f"  {alias}: {count}")
+
+    backends = data.get("backends", {})
+    if backends:
+        lines.append("")
+        lines.append("Backend distribution")
+        for backend, count in sorted(backends.items()):
+            lines.append(f"  {backend}: {count}")
+
+    cooldowns = data.get("cooldowns", {})
+    if cooldowns:
+        lines.append("")
+        lines.append("Cooldowns")
+        for backend, count in sorted(cooldowns.items()):
+            lines.append(f"  {backend}: {count}")
+
+    failures = data.get("backend_failures", {})
+    if failures:
+        lines.append("")
+        lines.append("Backend failures")
+        for backend, count in sorted(failures.items()):
+            lines.append(f"  {backend}: {count}")
+
+    limit_dets = data.get("limit_detections", {})
+    if limit_dets:
+        lines.append("")
+        lines.append("Limit detections")
+        for backend, count in sorted(limit_dets.items()):
+            lines.append(f"  {backend}: {count}")
+
+    return "\n".join(lines)
+
+
+async def _usage_impl(metrics_url: str) -> str:
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(metrics_url, timeout=10)
+        if resp.status_code != 200:
+            raise typer.Exit(1)
+        return _format_usage(resp.json())
+
+
+@cli.command()
+def usage(
+    metrics_url: str = typer.Option(default="http://127.0.0.1:18080/metrics", help="URL for /metrics endpoint"),
+) -> None:
+    """Show aggregated router usage (requests, fallbacks, latencies, tokens, distributions)."""
+    try:
+        output = asyncio.run(_usage_impl(metrics_url))
+    except Exception as exc:
+        typer.echo(f"Error fetching metrics: {exc}", err=True)
+        raise typer.Exit(1)
+    typer.echo(output)
 
 
 if __name__ == "__main__":

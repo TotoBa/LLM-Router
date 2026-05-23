@@ -34,9 +34,10 @@ aufgenommen:
 - [x] Privacy-safe Token-/Usage-Metriken ergaenzen: OpenAI-kompatibles `usage`
   aus Antworten aggregieren, `/metrics` JSON und Prometheus-Text erweitern.
   Keine Prompt- oder Response-Inhalte speichern.
-- [ ] Optionalen `llm-router usage` Diagnosebefehl ergaenzen:
+- [x] Optionalen `llm-router usage` Diagnosebefehl ergaenzen:
   `llm-router usage --metrics-url URL` zeigt Requests, Fallbacks, Latenz,
   Alias-/Backend-Verteilung und Token-Gesamtwerte lesbar an.
+  Implementiert in `src/llm_router/cli.py`; `_format_usage()` ist einzeln testbar.
 - [ ] Benchmark-Export fuer den Master vorbereiten: eine secretfreie
   Zusammenfassung aus `/metrics` oder CLI liefern, die Git-Ref, Alias,
   Backend, Latenz, Fehler-/Fallback-Rate, Cooldowns und Usage-Werte ausweist.

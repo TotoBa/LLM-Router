@@ -13,14 +13,12 @@ backends:
   ollama-vm-a:
     type: "openai_compatible"
     base_url: "http://127.0.0.1:11435/v1"
-    api_key_env: "OLLAMA_VM_A_API_KEY"
     priority: 10
     enabled: true
 
   ollama-vm-b:
     type: "openai_compatible"
     base_url: "http://127.0.0.1:11436/v1"
-    api_key_env: "OLLAMA_VM_B_API_KEY"
     priority: 20
     enabled: true
 

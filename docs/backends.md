@@ -33,7 +33,11 @@ cp docker/docker-compose.dual-ollama.example.yml docker-compose.ollama.local.yml
 cp configs/router.vm-dual-ollama.example.yaml configs/router.local.yaml
 ```
 
-Die echte lokale `.env` darf API-Keys enthalten und bleibt unversioniert:
+Die echte lokale `.env` darf API-Keys enthalten und bleibt unversioniert.
+Fuer die Docker-Ollama-Cloud-Container sind API-Keys in der aktuellen Runtime
+nicht erforderlich, wenn die Container bereits signierte Ollama-Logins in
+ihren Volumes besitzen; dann sollte kein Authorization-Header gesetzt werden,
+damit ein falscher Key den eingeloggten Account nicht uebersteuert:
 
 ```bash
 OLLAMA_VM_A_API_KEY=...
@@ -42,13 +46,19 @@ OLLAMA_VM_B_API_KEY=...
 
 Danach laufen die Cloud-Backends typischerweise auf `127.0.0.1:11435` und
 `127.0.0.1:11436`. Sie dienen als zwei getrennte Ollama-Cloud-Ausgaenge mit
-separaten API-Keys. Lokale Benchmarkmodelle laufen dagegen nicht in diesen
+separaten persistenten Logins. Lokale Benchmarkmodelle laufen dagegen nicht in diesen
 Containern, sondern ueber den bestehenden Host-Ollama auf
 `127.0.0.1:11434`. Dadurch muessen lokale Modelle nur einmal geladen werden
 und die VM versucht nicht, zwei lokale Modelle parallel zu betreiben.
 Ollamas lokale API ist standardmaessig nicht durch einen Bearer-Key
-abgesichert; die Keys werden fuer Ollama-Cloud-Zugriff beziehungsweise
-Client-/Router-Konventionen durchgereicht.
+abgesichert; ein Key wird nur fuer Client-/Router-Konventionen benoetigt, wenn
+eine vorgelagerte Schicht ihn verlangt.
+Fuer echte Dual-Cloud-Verteilung brauchen beide Docker-Ollamas nicht nur
+getrennte Container, sondern auch verschiedene signierte Ollama-Identitaeten
+in ihren privaten Docker-Volumes. Docker persistiert diese Identitaeten ueber
+Neustarts. Wenn beide Container denselben Identity-Fingerprint haben, verteilt
+Round-Robin zwar technisch ueber zwei Container, nutzt aber effektiv denselben
+Cloud-Account.
 
 Die Compose-Datei setzt `restart: unless-stopped`. Wenn Docker selbst beim
 Systemstart enabled ist, kommen die beiden Container nach einem Reboot wieder

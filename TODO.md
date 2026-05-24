@@ -96,6 +96,17 @@ aufgenommen:
   Cloud-Aliase gehen ueber die Docker-Ollamas; lokale Aliase gehen nur ueber
   den vorhandenen Host-Ollama `127.0.0.1:11434`, damit lokale Modelle nur
   einmal geladen werden muessen. Keine Keys im Repo.
+  Update 2026-05-25: Die Live-Runtime nutzt unterschiedliche persistente
+  Ollama-Cloud-Identitaeten fuer `ollama-vm-a` und `ollama-vm-b`; Docker
+  speichert diese Anmeldung in den named volumes ueber Neustarts hinweg.
+  Live-Smoke zeigte, dass diese Anmeldung ohne Authorization-Header fuer
+  Cloud-Modelle ausreicht; die Dual-Ollama-Beispielconfig setzt daher fuer
+  die Docker-Cloud-Backends kein `api_key_env`, damit ein falscher Key nicht
+  die persistente Anmeldung uebersteuert.
+  Fuer den naechsten Benchmark sind kleine Host-Ollama-Modelle bis ca. 2 GB
+  plus `granite4.1:3b` als lokale Runtime-Aliase vorgesehen. Cloud-Parallelitaet
+  und die lokale Einser-Spur werden im CaiLama-Runner begrenzt; der Router
+  bleibt generisch.
 - [x] Thinking-Mode-Benchmarkvarianten vorbereiten: `ModelRouteConfig`
   unterstuetzt jetzt `request_overrides`, damit Ollama-kompatible
   Requestfelder wie `think: false`, `think: true`, `think: "low"`,

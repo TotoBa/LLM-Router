@@ -48,6 +48,17 @@ Ollamas lokale API ist standardmaessig nicht durch einen Bearer-Key
 abgesichert; die Keys werden fuer Ollama-Cloud-Zugriff beziehungsweise
 Client-/Router-Konventionen durchgereicht.
 
+Die Compose-Datei setzt `restart: unless-stopped`. Wenn Docker selbst beim
+Systemstart enabled ist, kommen die beiden Container nach einem Reboot wieder
+hoch. Nach Aenderungen an `.env` muessen die Container neu erstellt werden,
+damit neue `OLLAMA_VM_A_API_KEY`-/`OLLAMA_VM_B_API_KEY`-Werte in der
+Containerumgebung landen:
+
+```bash
+docker compose --env-file .env -f docker-compose.ollama.local.yml up -d
+systemctl --user restart llm-router.service
+```
+
 ### Lokaler Ollama
 
 ```yaml

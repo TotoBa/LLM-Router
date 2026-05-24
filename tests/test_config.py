@@ -34,6 +34,7 @@ def test_load_dual_ollama_benchmark_example_config():
     )
     assert config.models["hemanth/chessplayer:latest"].backends == ["ollama-local"]
     assert config.models["starling-lm:7b"].routing_strategy == "priority"
+    assert config.models["qwen3.6:27b"].backends == ["ollama-local"]
 
 
 def test_null_request_timeout_means_no_long_running_deadline(tmp_path: Path):

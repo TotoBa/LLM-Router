@@ -1,0 +1,28 @@
+services:
+  ollama-vm-a:
+    image: ollama/ollama:latest
+    container_name: cailama-ollama-vm-a
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:11435:11434"
+    environment:
+      OLLAMA_HOST: "0.0.0.0:11434"
+      OLLAMA_API_KEY: "${OLLAMA_VM_A_API_KEY:-}"
+    volumes:
+      - cailama_ollama_vm_a:/root/.ollama
+
+  ollama-vm-b:
+    image: ollama/ollama:latest
+    container_name: cailama-ollama-vm-b
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:11436:11434"
+    environment:
+      OLLAMA_HOST: "0.0.0.0:11434"
+      OLLAMA_API_KEY: "${OLLAMA_VM_B_API_KEY:-}"
+    volumes:
+      - cailama_ollama_vm_b:/root/.ollama
+
+volumes:
+  cailama_ollama_vm_a:
+  cailama_ollama_vm_b:

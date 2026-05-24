@@ -1,0 +1,228 @@
+server:
+  host: "0.0.0.0"
+  port: 18080
+  require_api_key: false
+
+runtime:
+  request_timeout_seconds: null
+  connect_timeout_seconds: 10
+  reload_config_on_request: false
+  unknown_model_strategy: "error"
+
+backends:
+  ollama-vm-a:
+    type: "openai_compatible"
+    base_url: "http://127.0.0.1:11435/v1"
+    api_key_env: "OLLAMA_VM_A_API_KEY"
+    priority: 10
+    enabled: true
+
+  ollama-vm-b:
+    type: "openai_compatible"
+    base_url: "http://127.0.0.1:11436/v1"
+    api_key_env: "OLLAMA_VM_B_API_KEY"
+    priority: 20
+    enabled: true
+
+models:
+  default:
+    provider_model: "kimi-k2.6:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  kimi-cli-default:
+    provider_model: "kimi-k2.6:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  chess-router:
+    provider_model: "deepseek-v4-flash:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "standard"
+    routing_strategy: "round_robin"
+
+  chess-small:
+    provider_model: "gemma4:31b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  chess-large:
+    provider_model: "kimi-k2.6:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  chess-task:
+    provider_model: "kimi-k2.6:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  chess-coach:
+    provider_model: "gemma4:31b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  chess-analyst:
+    provider_model: "qwen3.5:397b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  chess-critic:
+    provider_model: "kimi-k2.6:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  chess-vision:
+    provider_model: "gemma4:31b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  chess-scribe:
+    provider_model: "deepseek-v4-flash:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "standard"
+    routing_strategy: "round_robin"
+
+  chess-researcher:
+    provider_model: "kimi-k2.6:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  kimi-k2.6:cloud:
+    provider_model: "kimi-k2.6:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  deepseek-v4-flash:cloud:
+    provider_model: "deepseek-v4-flash:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "standard"
+    routing_strategy: "round_robin"
+
+  deepseek-v4-pro:cloud:
+    provider_model: "deepseek-v4-pro:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  gemma4:31b-cloud:
+    provider_model: "gemma4:31b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  qwen3.5:397b-cloud:
+    provider_model: "qwen3.5:397b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  glm-5.1:cloud:
+    provider_model: "glm-5.1:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  minimax-m2.7:cloud:
+    provider_model: "minimax-m2.7:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "standard"
+    routing_strategy: "round_robin"
+
+  nemotron-3-super:cloud:
+    provider_model: "nemotron-3-super:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  gpt-oss:20b-cloud:
+    provider_model: "gpt-oss:20b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  hemanth/chessplayer:latest:
+    provider_model: "hemanth/chessplayer:latest"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  hemanth/chessplayer:
+    provider_model: "hemanth/chessplayer:latest"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  starling-lm:7b:
+    provider_model: "starling-lm:7b"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  gemma4:e2b:
+    provider_model: "gemma4:e2b"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  gemma4:e4b:
+    provider_model: "gemma4:e4b"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+policies:
+  standard:
+    max_attempts_per_backend: 1
+    max_backend_failures_before_cooldown: 2
+    backend_cooldown_seconds: 300
+    retry_on_connection_error: true
+    retry_on_timeout: false
+    fallback_on_limit: true
+    fallback_on_5xx: true
+    fallback_on_4xx: false
+    fallback_on_model_not_found: true
+    return_last_error_on_exhausted_backends: true
+    timeout_seconds: 300
+
+  benchmark:
+    max_attempts_per_backend: 1
+    max_backend_failures_before_cooldown: 2
+    backend_cooldown_seconds: 300
+    retry_on_connection_error: true
+    retry_on_timeout: false
+    fallback_on_limit: true
+    fallback_on_5xx: true
+    fallback_on_4xx: false
+    fallback_on_model_not_found: true
+    return_last_error_on_exhausted_backends: true
+    timeout_seconds: 0
+
+limit_detection:
+  status_codes: [402, 403, 429]
+  body_markers:
+    - "rate limit"
+    - "quota"
+    - "limit"
+    - "volume"
+    - "insufficient quota"
+    - "too many requests"
+    - "usage limit"
+
+logging:
+  level: "INFO"
+  jsonl_path: "logs/llm-router.jsonl"
+  log_request_body: false
+  log_response_body: false
+  log_prompt_chars: false
+  log_headers: false

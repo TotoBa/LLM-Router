@@ -83,6 +83,15 @@ aufgenommen:
   `chess-critic` und `chess-researcher` nutzen `kimi-k2.6:cloud`.
   `deepseek-v4-pro:cloud` ist aus den aktiven Beispielkonfigurationen und
   Config-Tests entfernt. `docker/Dockerfile` baut aus dem Repo-Root-Kontext.
+- [x] Dual-Ollama-VM-Konfiguration fuer vollstaendige Benchmarks vorbereiten:
+  `configs/router.vm-dual-ollama.example.yaml` routet Benchmarkmodelle ueber
+  zwei lokale VM-Ollama-Container (`ollama-vm-a`, `ollama-vm-b`) statt ueber
+  den Pi. `docker/docker-compose.dual-ollama.example.yml` startet zwei
+  lokale Ollama-Instanzen auf Loopback-Ports und nimmt API-Keys nur ueber
+  lokale Env-Variablen (`OLLAMA_VM_A_API_KEY`, `OLLAMA_VM_B_API_KEY`) auf.
+  Die zusaetzlichen Testmodelle `deepseek-v4-pro:cloud`,
+  `hemanth/chessplayer:latest`, `starling-lm:7b`, `gemma4:e2b` und
+  `gemma4:e4b` sind als Aliase vorbereitet. Keine Keys im Repo.
 
 ## Verifizierter Stand
 

@@ -116,6 +116,12 @@ models:
   kleineren Host unterschiedliche Modellnamen nutzen soll.
 - Soll ein Modell nur ueber einen Host verfuegbar sein, wird nur dieser Backend-Name gesetzt, z.B. `backends: ["vm"]`.
 - Fachliche Rollen wie `chess-coach` oder `chess-vision` sind normale Alias-Namen. Der Router injiziert keine Rollenprompts; Verhalten steuert der aufrufende Client.
+- Fuer Benchmark-Laeufe mit zwei lokalen Ollama-Instanzen gibt es
+  `configs/router.vm-dual-ollama.example.yaml`. Dort zeigen alle Benchmark-
+  Modelle auf `ollama-vm-a` und `ollama-vm-b`, nicht auf ein langsames
+  entferntes Backend. Neue Testmodelle wie `deepseek-v4-pro:cloud`,
+  `hemanth/chessplayer:latest`, `starling-lm:7b`, `gemma4:e2b` und
+  `gemma4:e4b` sind dort als normale Aliase vorbereitet.
 
 ## Verteilung
 

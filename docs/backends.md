@@ -22,6 +22,32 @@ backends:
 
 ## Ollama-Spezialfälle
 
+### Zwei lokale Ollama-Container auf einer VM
+
+Für längere Benchmarks kann der Router zwei lokale Ollama-Instanzen auf
+derselben VM ansprechen. Das ersetzt langsame entfernte Backends, bleibt aber
+reine Infrastrukturkonfiguration:
+
+```bash
+cp docker/docker-compose.dual-ollama.example.yml docker-compose.ollama.local.yml
+cp configs/router.vm-dual-ollama.example.yaml configs/router.local.yaml
+```
+
+Die echte lokale `.env` darf API-Keys enthalten und bleibt unversioniert:
+
+```bash
+OLLAMA_VM_A_API_KEY=...
+OLLAMA_VM_B_API_KEY=...
+```
+
+Danach laufen die Backends typischerweise auf `127.0.0.1:11435` und
+`127.0.0.1:11436`. Cloud-Modelle nutzen die gesetzten Ollama-Keys der
+jeweiligen Instanz; lokal auszufuehrende Modelle muessen in jeder Instanz
+vorhanden sein, wenn die Routerroute `round_robin` ueber beide Backends nutzt.
+Ollamas lokale API ist standardmaessig nicht durch einen Bearer-Key
+abgesichert; die Keys werden fuer Ollama-Cloud-Zugriff beziehungsweise
+Client-/Router-Konventionen durchgereicht.
+
 ### Lokaler Ollama
 
 ```yaml

@@ -124,6 +124,17 @@ models:
   werden als eigene Aliase ueber `request_overrides.think` modelliert. Die
   operativen Aliase `default` und `kimi-cli-default` sind Router-Defaults und
   keine CaiLama-Benchmarkkandidaten.
+- Der Translator ist eine eigene fachliche Rolle: `chess-translator` zeigt in
+  der VM-Dual-Ollama-Beispielkonfiguration auf `ministral-3:3b-cloud`. CaiLama
+  filtert diesen Rollenalias bei `--models auto` heraus, testet aber das
+  dahinterliegende Provider-Modell separat als normalen Benchmarkkandidaten.
+- Weitere Cloud-Kandidaten fuer den Modellrollenlauf werden als normale
+  Aliasrouten gepflegt, z.B. `devstral-small-2:24b-cloud`,
+  `nemotron-3-nano:30b-cloud`, `qwen3-next:80b-cloud`,
+  `qwen3-coder:480b-cloud`, `qwen3-coder-next:cloud`,
+  `kimi-k2-thinking:cloud`, `kimi-k2.5:cloud` und
+  `gemini-3-flash-preview:cloud`. Der Router bleibt dabei generisch und
+  enthaelt keine Schachlogik.
 
 ## Verteilung
 

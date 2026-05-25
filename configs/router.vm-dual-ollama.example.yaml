@@ -65,6 +65,12 @@ models:
     policy: "benchmark"
     routing_strategy: "round_robin"
 
+  chess-translator:
+    provider_model: "ministral-3:3b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
   chess-coach:
     provider_model: "gemma4:31b-cloud"
     backends: ["ollama-vm-a", "ollama-vm-b"]
@@ -163,6 +169,60 @@ models:
 
   gpt-oss:120b-cloud:
     provider_model: "gpt-oss:120b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  ministral-3:3b-cloud:
+    provider_model: "ministral-3:3b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  devstral-small-2:24b-cloud:
+    provider_model: "devstral-small-2:24b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  nemotron-3-nano:30b-cloud:
+    provider_model: "nemotron-3-nano:30b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  qwen3-next:80b-cloud:
+    provider_model: "qwen3-next:80b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  qwen3-coder:480b-cloud:
+    provider_model: "qwen3-coder:480b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  qwen3-coder-next:cloud:
+    provider_model: "qwen3-coder-next:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  kimi-k2-thinking:cloud:
+    provider_model: "kimi-k2-thinking:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  kimi-k2.5:cloud:
+    provider_model: "kimi-k2.5:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  gemini-3-flash-preview:cloud:
+    provider_model: "gemini-3-flash-preview:cloud"
     backends: ["ollama-vm-a", "ollama-vm-b"]
     policy: "benchmark"
     routing_strategy: "round_robin"
@@ -686,6 +746,70 @@ models:
     backends: ["ollama-vm-a", "ollama-vm-b"]
     request_overrides:
       think: "high"
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  nemotron-3-nano:30b-cloud:think-off:
+    provider_model: "nemotron-3-nano:30b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    request_overrides:
+      think: false
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  nemotron-3-nano:30b-cloud:think-on:
+    provider_model: "nemotron-3-nano:30b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    request_overrides:
+      think: true
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  qwen3-next:80b-cloud:think-off:
+    provider_model: "qwen3-next:80b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    request_overrides:
+      think: false
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  qwen3-next:80b-cloud:think-on:
+    provider_model: "qwen3-next:80b-cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    request_overrides:
+      think: true
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  kimi-k2.5:cloud:think-off:
+    provider_model: "kimi-k2.5:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    request_overrides:
+      think: false
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  kimi-k2.5:cloud:think-on:
+    provider_model: "kimi-k2.5:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    request_overrides:
+      think: true
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  gemini-3-flash-preview:cloud:think-off:
+    provider_model: "gemini-3-flash-preview:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    request_overrides:
+      think: false
+    policy: "benchmark"
+    routing_strategy: "round_robin"
+
+  gemini-3-flash-preview:cloud:think-on:
+    provider_model: "gemini-3-flash-preview:cloud"
+    backends: ["ollama-vm-a", "ollama-vm-b"]
+    request_overrides:
+      think: true
     policy: "benchmark"
     routing_strategy: "round_robin"
 

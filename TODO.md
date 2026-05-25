@@ -80,9 +80,10 @@ aufgenommen:
   YAML-Stubs und RouterError-Argumentreihenfolge beheben.
 - [x] Beispiel-Aliase und Docker-Beispiel auf aktuellen Teststand bringen:
   `chess-small` nutzt `gemma4:31b-cloud`; `chess-large`, `chess-task`,
-  `chess-critic` und `chess-researcher` nutzen `kimi-k2.6:cloud`.
-  `deepseek-v4-pro:cloud` ist aus den aktiven Beispielkonfigurationen und
-  Config-Tests entfernt. `docker/Dockerfile` baut aus dem Repo-Root-Kontext.
+  `chess-critic` und `chess-researcher` nutzen `kimi-k2.6:cloud`;
+  `chess-translator` nutzt `ministral-3:3b-cloud`. `deepseek-v4-pro:cloud`
+  bleibt als ausdruecklicher Benchmarkkandidat verfuegbar, aber nicht als
+  Standardrolle. `docker/Dockerfile` baut aus dem Repo-Root-Kontext.
 - [x] Dual-Ollama-VM-Konfiguration fuer vollstaendige Benchmarks vorbereiten:
   `configs/router.vm-dual-ollama.example.yaml` routet Benchmarkmodelle ueber
   zwei lokale VM-Ollama-Container (`ollama-vm-a`, `ollama-vm-b`) statt ueber
@@ -96,6 +97,12 @@ aufgenommen:
   Cloud-Aliase gehen ueber die Docker-Ollamas; lokale Aliase gehen nur ueber
   den vorhandenen Host-Ollama `127.0.0.1:11434`, damit lokale Modelle nur
   einmal geladen werden muessen. Keine Keys im Repo.
+  Update 2026-05-25: Fuer den naechsten vollstaendigen Modellrollenlauf sind
+  zusaetzlich `ministral-3:3b-cloud`, `devstral-small-2:24b-cloud`,
+  `nemotron-3-nano:30b-cloud`, `qwen3-next:80b-cloud`,
+  `qwen3-coder:480b-cloud`, `qwen3-coder-next:cloud`,
+  `kimi-k2-thinking:cloud`, `kimi-k2.5:cloud` und
+  `gemini-3-flash-preview:cloud` als Cloud-Benchmarkaliase vorbereitet.
   Update 2026-05-25: Die Live-Runtime nutzt unterschiedliche persistente
   Ollama-Cloud-Identitaeten fuer `ollama-vm-a` und `ollama-vm-b`; Docker
   speichert diese Anmeldung in den named volumes ueber Neustarts hinweg.

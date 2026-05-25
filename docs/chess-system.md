@@ -38,6 +38,7 @@ LLM_MODEL_RESEARCHER=chess-researcher
 | small | `chess-small` | `gemma4:31b-cloud` | Klassifikation, Zugbewertung |
 | large | `chess-large` | `kimi-k2.6:cloud` | Lange Analyse, Kommentierung |
 | task | `chess-task` | `kimi-k2.6:cloud` | PGN-Kommentare, Zusammenfassungen |
+| translator | `chess-translator` | `ministral-3:3b-cloud` | Deutsche Ausgabe-/Uebersetzungsschicht fuer intern englische Rollen-Probes |
 | coach | `chess-coach` | `gemma4:31b-cloud` | Didaktischer Trainingscoach, deutsch, spoilerarm, Nutzerstaerke beachten |
 | analyst | `chess-analyst` | `qwen3.5:397b-cloud` | Tiefe Analyse aus Engine-, Maia-, Board-Truth-, PGN- und Trainingskontext |
 | critic | `chess-critic` | `kimi-k2.6:cloud` | Widersprueche, unbelegte Aussagen und riskante Tool-/Analyseausgaben pruefen |

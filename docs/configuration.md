@@ -143,8 +143,7 @@ models:
   Aliasrouten gepflegt, z.B. `devstral-small-2:24b-cloud`,
   `nemotron-3-nano:30b-cloud`, `qwen3-next:80b-cloud`,
   `qwen3-coder:480b-cloud`, `qwen3-coder-next:cloud`,
-  `kimi-k2-thinking:cloud`, `kimi-k2.5:cloud` und
-  `gemini-3-flash-preview:cloud`. Der Router bleibt dabei generisch und
+  `kimi-k2.5:cloud` und `gemini-3-flash-preview:cloud`. Der Router bleibt dabei generisch und
   enthaelt keine Schachlogik.
 
 ## Verteilung

@@ -101,8 +101,10 @@ aufgenommen:
   zusaetzlich `ministral-3:3b-cloud`, `devstral-small-2:24b-cloud`,
   `nemotron-3-nano:30b-cloud`, `qwen3-next:80b-cloud`,
   `qwen3-coder:480b-cloud`, `qwen3-coder-next:cloud`,
-  `kimi-k2-thinking:cloud`, `kimi-k2.5:cloud` und
-  `gemini-3-flash-preview:cloud` als Cloud-Benchmarkaliase vorbereitet.
+  `kimi-k2.5:cloud` und `gemini-3-flash-preview:cloud` als
+  Cloud-Benchmarkaliase vorbereitet. `kimi-k2-thinking:cloud` wurde aus der
+  Benchmarkkonfiguration entfernt, weil beide Cloud-Ollama-Backends sofort HTTP
+  500 liefern; dieser Kandidat ist aktuell kein verwertbarer Vergleichsfall.
   Update 2026-05-25: Die Live-Runtime nutzt unterschiedliche persistente
   Ollama-Cloud-Identitaeten fuer `ollama-vm-a` und `ollama-vm-b`; Docker
   speichert diese Anmeldung in den named volumes ueber Neustarts hinweg.

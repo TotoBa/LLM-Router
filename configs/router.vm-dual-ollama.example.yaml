@@ -212,12 +212,6 @@ models:
     policy: "benchmark"
     routing_strategy: "round_robin"
 
-  kimi-k2-thinking:cloud:
-    provider_model: "kimi-k2-thinking:cloud"
-    backends: ["ollama-vm-a", "ollama-vm-b"]
-    policy: "benchmark"
-    routing_strategy: "round_robin"
-
   kimi-k2.5:cloud:
     provider_model: "kimi-k2.5:cloud"
     backends: ["ollama-vm-a", "ollama-vm-b"]

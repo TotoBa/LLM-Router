@@ -105,6 +105,12 @@ aufgenommen:
   Cloud-Benchmarkaliase vorbereitet. `kimi-k2-thinking:cloud` wurde aus der
   Benchmarkkonfiguration entfernt, weil beide Cloud-Ollama-Backends sofort HTTP
   500 liefern; dieser Kandidat ist aktuell kein verwertbarer Vergleichsfall.
+  Update 2026-05-29: `mistral-api` ist als direktes OpenAI-kompatibles Backend
+  mit `api_key_env: MISTRAL_API_KEY` in der VM-Dual-Ollama-Beispielconfig
+  vorbereitet. `mistral-small-latest` ist der einzelne Mistral-
+  Benchmarkkandidat fuer den naechsten Free-/Experiment-Plan-Smoke; weitere
+  Mistral-Modelle werden nicht automatisch mitgetestet, solange der Nutzer
+  nicht explizit mehrere Mistral-Varianten anfordert.
   Update 2026-05-25: Die Live-Runtime nutzt unterschiedliche persistente
   Ollama-Cloud-Identitaeten fuer `ollama-vm-a` und `ollama-vm-b`; Docker
   speichert diese Anmeldung in den named volumes ueber Neustarts hinweg.

@@ -31,6 +31,14 @@ backends:
     enabled: true
     max_concurrent_requests: 1
 
+  mistral-api:
+    type: "openai_compatible"
+    base_url: "https://api.mistral.ai/v1"
+    api_key_env: "MISTRAL_API_KEY"
+    priority: 40
+    enabled: true
+    max_concurrent_requests: 1
+
 models:
   default:
     provider_model: "kimi-k2.6:cloud"
@@ -223,6 +231,12 @@ models:
     backends: ["ollama-vm-a", "ollama-vm-b"]
     policy: "benchmark"
     routing_strategy: "round_robin"
+
+  mistral-small-latest:
+    provider_model: "mistral-small-latest"
+    backends: ["mistral-api"]
+    policy: "benchmark"
+    routing_strategy: "priority"
 
   deepseek-r1:1.5b:
     provider_model: "deepseek-r1:1.5b"

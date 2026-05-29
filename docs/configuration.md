@@ -70,6 +70,14 @@ backends:
     endpoint_path: "/v1/images/generations"
     priority: 20
     enabled: true
+
+  mistral-api:
+    type: "openai_compatible"
+    base_url: "https://api.mistral.ai/v1"
+    api_key_env: "MISTRAL_API_KEY"
+    priority: 40
+    enabled: true
+    max_concurrent_requests: 1
 ```
 
 - `base_url` zeigt auf die OpenAI-kompatible API, bei Ollama also mit `/v1`
@@ -128,7 +136,11 @@ models:
   entferntes Backend. Cloud-Modelle laufen ueber die Docker-Ollamas, lokale
   Modelle ueber den Host-Ollama auf `127.0.0.1:11434`. Thinking-Varianten
   werden als eigene Aliase ueber `request_overrides.think` modelliert. Die
-  operativen Aliase `default` und `kimi-cli-default` sind Router-Defaults und
+  Beispielconfig enthaelt zusaetzlich `mistral-api` als direktes
+  OpenAI-kompatibles Backend. Der API-Key wird nur ueber `MISTRAL_API_KEY`
+  referenziert; `mistral-small-latest` ist als einzelner Benchmarkkandidat
+  fuer Free-/Experiment-Plan-Smokes vorbereitet. Die operativen Aliase
+  `default` und `kimi-cli-default` sind Router-Defaults und
   keine CaiLama-Benchmarkkandidaten.
 - Die VM-Dual-Ollama-Konfiguration setzt pro Cloud-Backend
   `max_concurrent_requests: 3` und fuer den Host-Ollama

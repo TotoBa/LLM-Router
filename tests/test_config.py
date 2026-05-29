@@ -21,10 +21,11 @@ def test_load_example_config(example_config_path: Path):
 def test_load_dual_ollama_benchmark_example_config():
     config = load_config("configs/router.vm-dual-ollama.example.yaml")
     assert config.runtime.request_timeout_seconds is None
-    assert sorted(config.backends) == ["ollama-local", "ollama-vm-a", "ollama-vm-b"]
+    assert sorted(config.backends) == ["mistral-api", "ollama-local", "ollama-vm-a", "ollama-vm-b"]
     assert config.backends["ollama-vm-a"].api_key_env is None
     assert config.backends["ollama-vm-b"].api_key_env is None
     assert config.backends["ollama-local"].api_key_env is None
+    assert config.backends["mistral-api"].api_key_env == "MISTRAL_API_KEY"
     assert config.models["deepseek-v4-pro:cloud"].backends == [
         "ollama-vm-a",
         "ollama-vm-b",
@@ -43,6 +44,7 @@ def test_load_dual_ollama_benchmark_example_config():
         "ollama-vm-b",
     ]
     assert config.models["gpt-oss:20b-cloud:think-low"].request_overrides == {"think": "low"}
+    assert config.models["mistral-small-latest"].backends == ["mistral-api"]
     assert "gpt-oss:20b-cloud:think-off" not in config.models
     assert "hemanth/chessplayer:latest" not in config.models
 

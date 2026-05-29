@@ -8,7 +8,7 @@ Jeder Server, der die OpenAI-compatible Chat-Completions-API spricht:
 
 - **Ollama** (lokal, auf RasPi, im Netzwerk)
 - **llama.cpp-Server**
-- **OpenRouter**, **OpenAI**, **Kimi** (über eigene Env-Keys)
+- **OpenRouter**, **OpenAI**, **Kimi**, **Mistral API** (über eigene Env-Keys)
 
 ```yaml
 backends:
@@ -18,6 +18,27 @@ backends:
     api_key_env: "OPENROUTER_API_KEY"
     priority: 30
     enabled: true
+```
+
+Direkte Provider wie Mistral werden genauso konfiguriert. Der Key wird nur als
+Env-Variablenname referenziert, nicht versioniert:
+
+```yaml
+backends:
+  mistral-api:
+    type: "openai_compatible"
+    base_url: "https://api.mistral.ai/v1"
+    api_key_env: "MISTRAL_API_KEY"
+    priority: 40
+    enabled: true
+    max_concurrent_requests: 1
+
+models:
+  mistral-small-latest:
+    provider_model: "mistral-small-latest"
+    backends: ["mistral-api"]
+    policy: "benchmark"
+    routing_strategy: "priority"
 ```
 
 ## Ollama-Spezialfälle

@@ -143,7 +143,7 @@ models:
   `default` und `kimi-cli-default` sind Router-Defaults und
   keine CaiLama-Benchmarkkandidaten.
 - Die VM-Dual-Ollama-Konfiguration setzt pro Cloud-Backend
-  `max_concurrent_requests: 3` und fuer den Host-Ollama
+  `max_concurrent_requests: 2` und fuer den Host-Ollama
   `max_concurrent_requests: 1`. Der Runner darf dadurch mehrere Cloud-Requests
   parallel starten, ohne dass ein einzelner Ollama-Cloud-Account mehr als drei
   gleichzeitige Requests erhaelt.

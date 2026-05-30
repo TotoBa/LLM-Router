@@ -26,6 +26,7 @@ class ModelRouteConfig(BaseModel):
     provider_model: str
     backends: list[str] | None = None
     backend_models: dict[str, str] | None = None
+    capabilities: list[str] = Field(default_factory=list)
     request_overrides: dict[str, Any] = Field(default_factory=dict)
     policy: str = "standard"
     routing_strategy: str = "priority"

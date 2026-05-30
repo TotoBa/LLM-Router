@@ -26,6 +26,7 @@ backends:
 models:
   default:
     provider_model: "deepseek-v4-flash:cloud"
+    capabilities: ["text", "fallback"]
     backends: ["local", "pi"]
     policy: "standard"
 

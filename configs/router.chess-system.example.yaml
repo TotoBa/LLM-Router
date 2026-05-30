@@ -26,56 +26,67 @@ backends:
 models:
   kimi-cli-default:
     provider_model: "kimi-k2.6:cloud"
+    capabilities: ["text", "large_context", "analysis"]
     backends: ["local", "pi"]
     policy: "interactive"
 
   chess-router:
     provider_model: "deepseek-v4-flash:cloud"
+    capabilities: ["text", "fast"]
     backends: ["local", "pi"]
     policy: "standard"
 
   chess-small:
     provider_model: "gemma4:31b-cloud"
+    capabilities: ["text", "fast"]
     backends: ["local", "pi"]
     policy: "long_running"
 
   chess-large:
     provider_model: "kimi-k2.6:cloud"
+    capabilities: ["text", "large_context", "analysis"]
     backends: ["local", "pi"]
     policy: "long_running"
 
   chess-task:
     provider_model: "kimi-k2.6:cloud"
+    capabilities: ["text", "analysis"]
     backends: ["local", "pi"]
     policy: "long_running"
 
   chess-coach:
     provider_model: "gemma4:31b-cloud"
+    capabilities: ["text", "analysis"]
     backends: ["local", "pi"]
     policy: "long_running"
 
   chess-analyst:
     provider_model: "qwen3.5:397b-cloud"
+    capabilities: ["text", "large_context", "analysis"]
     backends: ["local", "pi"]
     policy: "long_running"
 
   chess-critic:
     provider_model: "kimi-k2.6:cloud"
+    capabilities: ["text", "analysis"]
     backends: ["local", "pi"]
     policy: "long_running"
 
   chess-vision:
     provider_model: "gemma4:31b-cloud"
+    capabilities: ["text", "vision", "analysis"]
     backends: ["local", "pi"]
     policy: "long_running"
 
   chess-scribe:
     provider_model: "deepseek-v4-flash:cloud"
+    capabilities: ["text"]
     backends: ["local", "pi"]
     policy: "standard"
 
   chess-researcher:
     provider_model: "kimi-k2.6:cloud"
+    capabilities: ["text", "large_context", "analysis"]
     backends: ["local", "pi"]
     policy: "long_running"
 

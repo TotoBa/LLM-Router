@@ -73,16 +73,19 @@ schnell antworten und bei Fehlern schnell wechseln muss.
 models:
   chess-router:
     provider_model: "deepseek-v4-flash:cloud"
+    capabilities: ["text", "fast"]
     backends: ["vm", "pi"]
     policy: "standard"
 
   chess-small:
     provider_model: "gemma4:31b-cloud"
+    capabilities: ["text", "fast"]
     backends: ["vm", "pi"]
     policy: "long_running"
 
   chess-large:
     provider_model: "kimi-k2.6:cloud"
+    capabilities: ["text", "large_context", "analysis"]
     backends: ["vm", "pi"]
     policy: "long_running"
 
@@ -108,6 +111,7 @@ models:
 
   chess-vision:
     provider_model: "gemma4:31b-cloud"
+    capabilities: ["text", "vision", "analysis"]
     backends: ["vm", "pi"]
     policy: "long_running"
 

@@ -44,6 +44,10 @@ backends:
 models:
   gpt-4o:
     provider_model: gpt-4o
+    capabilities:
+      - text
+      - vision
+      - large_context
     backends:
       - openai
     policy: standard

@@ -10,6 +10,18 @@ def test_models_returns_logical_aliases(client):
     assert "claude-opus" in model_ids
 
 
+def test_models_include_secretfree_capability_metadata(client):
+    response = client.get("/v1/models")
+    assert response.status_code == 200
+    data = response.json()
+    by_id = {m["id"]: m for m in data.get("data", [])}
+    assert by_id["gpt-4o"]["capabilities"] == ["text", "vision", "large_context"]
+    assert by_id["gpt-4o"]["policy"] == "standard"
+    assert by_id["gpt-4o"]["routing_strategy"] == "priority"
+    assert "provider_model" not in by_id["gpt-4o"]
+    assert "backends" not in by_id["gpt-4o"]
+
+
 def test_no_secrets_in_models_response(client):
     response = client.get("/v1/models")
     assert response.status_code == 200

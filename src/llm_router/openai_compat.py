@@ -403,6 +403,9 @@ async def list_models() -> dict[str, Any]:
                 "object": "model",
                 "created": int(time.time()),
                 "owned_by": "llm-router",
+                "capabilities": list(route.capabilities),
+                "policy": route.policy,
+                "routing_strategy": route.routing_strategy,
             }
         )
     return {"object": "list", "data": data}

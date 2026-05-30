@@ -176,11 +176,13 @@ backends:
 models:
   default:
     provider_model: "deepseek-v4-flash:cloud"
+    capabilities: ["text", "fallback"]
     backends: ["local", "pi"]
     policy: "standard"
 
   chess-small:
     provider_model: "gemma4:31b-cloud"
+    capabilities: ["text", "fast"]
     backends: ["local", "pi"]
     policy: "long_running"
     routing_strategy: "round_robin"

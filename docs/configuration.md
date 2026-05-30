@@ -98,22 +98,26 @@ backends:
 models:
   chess-small:
     provider_model: "gemma4:31b-cloud"
+    capabilities: ["text", "fast"]
     backends: ["local", "pi"]
     policy: "long_running"
     routing_strategy: "round_robin"
 
   chess-large:
     provider_model: "kimi-k2.6:cloud"
+    capabilities: ["text", "large_context", "analysis"]
     backends: ["local", "pi"]
     policy: "long_running"
 
   chess-task:
     provider_model: "kimi-k2.6:cloud"
+    capabilities: ["text", "analysis"]
     backends: ["local", "pi"]
     policy: "long_running"
 
   chess-analysis:
     provider_model: "fallback-model"
+    capabilities: ["text", "analysis", "fallback"]
     backend_models:
       local: "qwen2.5:14b"
       pi: "qwen2.5:7b"
@@ -123,6 +127,10 @@ models:
 
 - **Logisches Modell** (`chess-small`) ist das, was der Client anfragt
 - **Provider-Modell** (`gemma4:31b-cloud`) ist das, was das Backend versteht
+- **Capabilities** sind freie, generische Tags fuer Clients und UIs, z.B.
+  `text`, `vision`, `large_context`, `fast`, `analysis`, `fallback`.
+  Der Router nutzt sie als Metadaten und gibt sie ueber `/v1/models` aus; er
+  injiziert daraus keine Prompt- oder Fachlogik.
 - **Backends**: Reihenfolge ist Fallback-Reihenfolge. Fehlt sie, werden alle `enabled` Backends nach `priority` sortiert.
 - Provider-Modelle muessen auf jedem Backend verfuegbar sein, das in `backends` genannt ist
 - `backend_models` ueberschreibt den Provider-Modellnamen je Backend. Das ist
@@ -130,6 +138,10 @@ models:
   kleineren Host unterschiedliche Modellnamen nutzen soll.
 - Soll ein Modell nur ueber einen Host verfuegbar sein, wird nur dieser Backend-Name gesetzt, z.B. `backends: ["vm"]`.
 - Fachliche Rollen wie `chess-coach` oder `chess-vision` sind normale Alias-Namen. Der Router injiziert keine Rollenprompts; Verhalten steuert der aufrufende Client.
+- Vision-Provider werden als normale Modellaliase mit `capabilities:
+  ["text", "vision", ...]` konfiguriert. Eine Web-UI kann dadurch reine
+  Textmodelle von Vision-fähigen Modellen unterscheiden, ohne Routerlogik zu
+  duplizieren.
 - Fuer Benchmark-Laeufe mit zwei lokalen Ollama-Instanzen gibt es
   `configs/router.vm-dual-ollama.example.yaml`. Dort zeigen alle Benchmark-
   Modelle auf `ollama-vm-a` und `ollama-vm-b`, nicht auf ein langsames
